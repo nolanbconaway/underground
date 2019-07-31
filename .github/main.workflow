@@ -1,9 +1,7 @@
 
 workflow "Build and Test" {
   on = "push"
-  resolves = [
-    "Test",
-  ]
+  resolves = ["Test"]
 }
 
 action "Install" {
@@ -16,7 +14,6 @@ action "Black" {
   args = "black mta_realtime test --check --verbose"
   needs = ["Install"]
 }
-
 
 action "Pydocstyle" {
   uses = "nolanbconaway/python-actions@master"
