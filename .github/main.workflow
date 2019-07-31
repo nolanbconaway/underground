@@ -13,7 +13,7 @@ action "Install" {
   poetry config settings.virtualenvs.in-project true && \
   poetry install && \
   source .venv/bin/activate \
-  "
+  which python"
 }
 
 
