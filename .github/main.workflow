@@ -16,18 +16,10 @@ action "Install" {
   "
 }
 
-action "Lint" {
-  uses = "nolanbconaway/python-actions@master"
-  args = "\
-  black mta_realtime test --check --verbose && \
-  pydocstyle mta_realtime test --verbose  && \
-  pylint mta_realtime test -d C0303 -d C0412 -d C0330 \
-  "
-  needs = ["Poetry"]
-}
+
 
 action "Test" {
   uses = "nolanbconaway/python-actions@master"
   args = "pytest . -v"
-  needs = ["Lint"]
+  needs = ["Install"]
 }
