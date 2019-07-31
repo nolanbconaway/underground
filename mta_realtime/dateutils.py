@@ -1,8 +1,5 @@
 """Datetime utilities for the module."""
 
-import datetime
-import os
-import time
 import typing
 
 import pendulum
@@ -33,8 +30,8 @@ def current_time(
     """
     if epoch:
         return pendulum.now("utc").int_timestamp
-    else:
-        return pendulum.now(timezone)
+
+    return pendulum.now(timezone)
 
 
 def epoch_to_datetime(

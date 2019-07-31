@@ -1,7 +1,6 @@
 """Command line interface."""
 
 import argparse
-import itertools
 import os
 import sys
 
@@ -10,16 +9,16 @@ import dotenv
 from . import dateutils, metadata
 from .mta import get_feed_stops
 
-parser = argparse.ArgumentParser()
+PARSER = argparse.ArgumentParser()
 
 """
 APIKEY -- env
 ROUTE 
 STOP
 """
-parser.add_argument("route", help="Route id.", choices=metadata.VALID_ROUTES)
+PARSER.add_argument("route", help="Route id.", choices=metadata.VALID_ROUTES)
 
-parser.add_argument(
+PARSER.add_argument(
     "-f",
     "--format",
     default="%H:%M",
@@ -28,7 +27,7 @@ parser.add_argument(
     help="strftime format for stop times.",
 )
 
-parser.add_argument(
+PARSER.add_argument(
     "-e",
     "--epoch",
     action="store_true",
@@ -36,7 +35,7 @@ parser.add_argument(
     help="Option to print times as unix timestamps. If set --format will be ignored.",
 )
 
-parser.add_argument(
+PARSER.add_argument(
     "--retries",
     default=100,
     type=int,
@@ -44,7 +43,7 @@ parser.add_argument(
     help="Retry attempts in case of API connection failure. Default 100.",
 )
 
-parser.add_argument(
+PARSER.add_argument(
     "--api-key",
     default=None,
     dest="api_key",
@@ -59,7 +58,7 @@ def main():
         dotenv.load_dotenv()
 
     # parse args
-    args = parser.parse_args()
+    args = PARSER.parse_args()
 
     if args.api_key:
         api_key = args.api_key

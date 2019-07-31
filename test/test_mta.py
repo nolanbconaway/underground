@@ -5,7 +5,7 @@ import json
 from mta_realtime import mta
 
 # some data that i copied and edited
-gtfs_data = json.loads(
+GTFS_DATA = json.loads(
     """
 {
     "header": {
@@ -65,5 +65,5 @@ gtfs_data = json.loads(
 
 def test_extract_stop_dict():
     """Test that the correct train times are extracted."""
-    res = mta.extract_stop_dict(gtfs_data)
+    res = mta.extract_stop_dict(GTFS_DATA)
     assert len(res["7"]["702N"]) == 2

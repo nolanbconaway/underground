@@ -1,6 +1,5 @@
 """Interact with the MTA GTFS api."""
 
-import os
 import time
 from operator import itemgetter
 
@@ -14,8 +13,6 @@ from . import dateutils, metadata
 
 class GTFSEmptyError(Exception):
     """Thrown when the GTFS data is empty."""
-
-    pass
 
 
 def request_feed_data(api_key: str, feed_id: int, retries: int = 100) -> dict:
@@ -57,9 +54,9 @@ def request_feed_data(api_key: str, feed_id: int, retries: int = 100) -> dict:
     except (GTFSEmptyError, google.protobuf.message.DecodeError):
         if retries == 0:
             raise
-        else:
-            time.sleep(1)
-            return request_feed_data(api_key, feed_id, retries - 1)
+
+        time.sleep(1)
+        return request_feed_data(api_key, feed_id, retries - 1)
 
     return feed_dict
 

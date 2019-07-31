@@ -17,9 +17,9 @@ def test_current_time_epoch_int():
 
 def test_current_time_working():
     """Test that current time is later if called in the future."""
-    t1 = dateutils.current_time()
-    t2 = dateutils.current_time()
-    assert t2 > t1
+    t_1 = dateutils.current_time()
+    t_2 = dateutils.current_time()
+    assert t_2 > t_1
 
 
 def test_epoch_to_datetime():
