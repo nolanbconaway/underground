@@ -12,7 +12,7 @@ action "Install" {
   curl -sSL https://raw.githubusercontent.com/sdispater/poetry/master/get-poetry.py | python && \
   poetry config settings.virtualenvs.in-project true && \
   poetry install && \
-  source .venv/bin/activate
+  source .venv/bin/activate \
   "
 }
 
@@ -21,7 +21,7 @@ action "Lint" {
   args = "
   black mta_realtime test --check --verbose && \
   pydocstyle mta_realtime test --verbose  && \
-  pylint mta_realtime test -d C0303 -d C0412 -d C0330
+  pylint mta_realtime test -d C0303 -d C0412 -d C0330 \
   "
   needs = ["Poetry"]
 }
