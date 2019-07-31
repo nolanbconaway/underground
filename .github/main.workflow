@@ -6,15 +6,9 @@ workflow "Build and Test" {
   ]
 }
 
-action "Poetry" {
-  uses = "nolanbconaway/python-actions@master"
-  args = "curl -sSL https://raw.githubusercontent.com/sdispater/poetry/master/get-poetry.py | python && export PATH=$HOME/.poetry/bin:$PATH"
-}
-
 action "Install" {
   uses = "nolanbconaway/python-actions@master"
-  args = "poetry install && poetry shell && which python"
-  needs = ["Poetry"]
+  args = "pip install poetry && poetry install && poetry shell && which python"
 }
 
 action "Black" {
