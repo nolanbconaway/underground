@@ -12,7 +12,7 @@ action "Install" {
   curl -sSL https://raw.githubusercontent.com/sdispater/poetry/master/get-poetry.py | python && \
   poetry config settings.virtualenvs.in-project true && \
   poetry install && \
-  source .venv/bin/activate \
+  source .venv/bin/activate && \
   which python"
 }
 
