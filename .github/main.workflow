@@ -8,7 +8,7 @@ workflow "Build and Test" {
 
 action "Poetry" {
   uses = "nolanbconaway/python-actions@master"
-  args = "curl -sSL https://raw.githubusercontent.com/sdispater/poetry/master/get-poetry.py | python && source $HOME/.poetry/env"
+  args = "curl -sSL https://raw.githubusercontent.com/sdispater/poetry/master/get-poetry.py | python && export PATH=$HOME/.poetry/bin:$PATH"
 }
 
 action "Install" {
