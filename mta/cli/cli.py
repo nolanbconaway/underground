@@ -3,7 +3,7 @@ import os
 
 import click
 
-from mta.cli import image, stops
+from mta.cli import stops
 
 
 @click.group()
@@ -13,4 +13,3 @@ def entry_point():
 
 
 entry_point.add_command(stops.main, name="stops")
-entry_point.add_command(image.main, name="image")

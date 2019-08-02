@@ -7,7 +7,7 @@ import click
 import dotenv
 
 from mta import dateutils, metadata
-from mta.mta import get_feed_stops
+from mta.mta import get_stops
 
 
 @click.command()
@@ -52,7 +52,7 @@ def main(route, fmt, epoch, retries, api_key):
             raise click.ClickException("No API_KEY set!")
 
     # get feed data
-    stops = get_feed_stops(
+    stops = get_stops(
         api_key=api_key, feed_id=metadata.ROUTE_FEED_MAP.get(route), retries=retries
     ).get(route, dict())
 

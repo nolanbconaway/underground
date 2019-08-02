@@ -116,7 +116,7 @@ def extract_stop_dict(gtfs_result: dict) -> dict:
     return stops_grouped
 
 
-def get_feed_stops(api_key: str, feed_id: int, retries: int = 100) -> dict:
+def get_stops(api_key: str, feed_id: int, retries: int = 100) -> dict:
     """Request feed data and extract train stop times.
 
     This function combines ``request_feed_data`` and ``extract_stop_dict``
