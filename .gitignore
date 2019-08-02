@@ -8,3 +8,4 @@ snapshot.png
 .vscode
 .pytest_cache
 *.egg-info
+.tox
