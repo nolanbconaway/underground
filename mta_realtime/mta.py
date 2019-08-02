@@ -15,6 +15,18 @@ class GTFSEmptyError(Exception):
     """Thrown when the GTFS data is empty."""
 
 
+def parse_feed_data(gtfs_data):
+    """Parse raw GTFS data into native python objects."""
+    feed = gtfs_realtime_pb2.FeedMessage()
+    feed.ParseFromString(gtfs_data)
+    feed_dict = protobuf_to_dict(feed)
+
+    if not feed_dict or "entity" not in feed_dict:
+        raise GTFSEmptyError
+
+    return feed_dict
+
+
 def request_feed_data(api_key: str, feed_id: int, retries: int = 100) -> dict:
     """Send a get request for realtime feed data, handle retries on error.
     
@@ -44,12 +56,7 @@ def request_feed_data(api_key: str, feed_id: int, retries: int = 100) -> dict:
             "http://datamine.mta.info/mta_esi.php",
             params=dict(key=api_key, feed_id=feed_id),
         )
-        feed = gtfs_realtime_pb2.FeedMessage()
-        feed.ParseFromString(res.content)
-        feed_dict = protobuf_to_dict(feed)
-
-        if not feed_dict or "entity" not in feed_dict:
-            raise GTFSEmptyError
+        feed_dict = parse_feed_data(res.content)
 
     except (GTFSEmptyError, google.protobuf.message.DecodeError):
         if retries == 0:
