@@ -1,8 +1,22 @@
 # Python MTA Utilities
 
+[![my badge](https://action-badges.now.sh/nolanbconaway/mta)](https://github.com/nolanbconaway/mta/actions)
+
 This is a set of Python utilities that I use to deal with [real-time NYC subway data](https://datamine.mta.info/).
 
 I usually want to know when trains are going to depart a specific stop along a specific train line, so right now the tools are only for that.
+
+## Install
+
+```sh
+pip install git+https://github.com/nolanbconaway/mta.git#egg=mta
+```
+
+If you'd like to the use the command line tools, you'll need some extra requirements:
+
+```sh
+pip install git+https://github.com/nolanbconaway/mta.git#egg=mta[cli]
+```
 
 ## Python API
 
@@ -53,7 +67,7 @@ $ export API_KEY='...'
 $ mta stops Q | tail -2
 Q05S  19:01 19:09 19:16 19:25 19:34 19:44 19:51 19:58
 Q04S  19:03 19:11 19:18 19:27 19:36 19:46 19:53 20:00
-$ mta stops --help     
+$ mta stops --help
 Usage: mta stops [OPTIONS]
                  [N|M|R|4|L|GS|D|G|SI|J|Q|6|2|1|W|C|B|Z|H|7|A|E|FS|F|5]
 
