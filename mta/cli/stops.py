@@ -11,11 +11,6 @@ from mta.mta import get_feed_stops
 
 PARSER = argparse.ArgumentParser()
 
-"""
-APIKEY -- env
-ROUTE 
-STOP
-"""
 PARSER.add_argument("route", help="Route id.", choices=metadata.VALID_ROUTES)
 
 PARSER.add_argument(
