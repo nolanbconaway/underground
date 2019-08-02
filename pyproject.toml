@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "mta-realtime"
+name = "mta"
 version = "0.1.0"
 description = ""
 authors = ["Nolan Conaway <nolanbconaway@gmail.com>"]
@@ -26,3 +26,6 @@ tox = "^3.13"
 [build-system]
 requires = ["poetry>=0.12"]
 build-backend = "poetry.masonry.api"
+
+[tool.poetry.scripts]
+funniest-joke = "mta.command_line:main"

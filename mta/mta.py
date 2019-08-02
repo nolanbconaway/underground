@@ -8,7 +8,7 @@ import requests
 from google.transit import gtfs_realtime_pb2
 from protobuf_to_dict import protobuf_to_dict
 
-from . import dateutils, metadata
+from mta import dateutils, metadata
 
 
 class GTFSEmptyError(Exception):

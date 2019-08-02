@@ -2,7 +2,7 @@
 
 import json
 
-from mta_realtime import mta
+from mta import mta
 
 # some data that i copied and edited
 GTFS_DATA = json.loads(

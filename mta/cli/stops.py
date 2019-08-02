@@ -6,8 +6,8 @@ import sys
 
 import dotenv
 
-from mta_realtime import dateutils, metadata
-from mta_realtime.mta import get_feed_stops
+from mta import dateutils, metadata
+from mta.mta import get_feed_stops
 
 PARSER = argparse.ArgumentParser()
 

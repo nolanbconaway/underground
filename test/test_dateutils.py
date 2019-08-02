@@ -2,7 +2,7 @@
 
 import pendulum
 
-from mta_realtime import dateutils
+from mta import dateutils
 
 
 def test_current_time_datetime():
