@@ -49,7 +49,7 @@ def main(route, fmt, epoch, retries, api_key):
         api_key = os.getenv("API_KEY")
 
         if api_key is None:
-            sys.exit("No API_KEY set!")
+            click.exit("No API_KEY set!")
 
     # get feed data
     stops = get_feed_stops(
