@@ -2,81 +2,68 @@
 
 import argparse
 import os
-import sys
 
+import click
 import dotenv
 
 from mta import dateutils, metadata
 from mta.mta import get_feed_stops
 
-PARSER = argparse.ArgumentParser()
 
-PARSER.add_argument("route", help="Route id.", choices=metadata.VALID_ROUTES)
-
-PARSER.add_argument(
+@click.command()
+@click.argument("route", nargs=1, type=click.Choice(metadata.VALID_ROUTES))
+@click.option(
     "-f",
     "--format",
+    "fmt",
     default="%H:%M",
     type=str,
-    dest="format",
     help="strftime format for stop times.",
 )
-
-PARSER.add_argument(
+@click.option(
     "-e",
     "--epoch",
-    action="store_true",
-    dest="epoch",
+    default=False,
+    is_flag=True,
+    type=bool,
     help="Option to print times as unix timestamps. If set --format will be ignored.",
 )
-
-PARSER.add_argument(
+@click.option(
     "--retries",
     default=100,
     type=int,
-    dest="retries",
     help="Retry attempts in case of API connection failure. Default 100.",
 )
-
-PARSER.add_argument(
+@click.option(
     "--api-key",
     default=None,
-    dest="api_key",
     help="MTA API key. Will be read from $API_KEY if not provided.",
 )
+def main(route, fmt, epoch, retries, api_key):
+    """Print out train departure times for all stops on a subway line."""
+    # get api key from env if not provided
+    if api_key is None:
+        if os.path.exists(".env"):
+            dotenv.load_dotenv()
 
-
-def main():
-    """CLI main function."""
-    # load env
-    if os.path.exists(".env"):
-        dotenv.load_dotenv()
-
-    # parse args
-    args = PARSER.parse_args()
-
-    if args.api_key:
-        api_key = args.api_key
-    else:
         api_key = os.getenv("API_KEY")
-        if not api_key:
+
+        if api_key is None:
             sys.exit("No API_KEY set!")
 
     # get feed data
     stops = get_feed_stops(
-        api_key=api_key,
-        feed_id=metadata.ROUTE_FEED_MAP.get(args.route),
-        retries=args.retries,
-    ).get(args.route, dict())
+        api_key=api_key, feed_id=metadata.ROUTE_FEED_MAP.get(route), retries=retries
+    ).get(route, dict())
 
-    if args.epoch:
+    if epoch:
         format_fun = dateutils.datetime_to_epoch
     else:
-        format_fun = lambda x: x.strftime(args.format)
+        format_fun = lambda x: x.strftime(fmt)
 
     for stop_id, departures in stops.items():
         departures_formatted = map(str, map(format_fun, sorted(departures)))
-        print(f"""{stop_id}  {' '.join(departures_formatted)}""")
+        click.echo(f"""{stop_id}  {' '.join(departures_formatted)}""")
 
 
 if __name__ == "__main__":
