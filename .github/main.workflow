@@ -21,8 +21,14 @@ action "Pydocstyle" {
   needs = ["Install"]
 }
 
-action "Test" {
+action "Pylint" {
+  uses = "nolanbconaway/python-actions@master"
+  args = "pylint mta test -d C0303,C0412,C0330,E1120"
+  needs = ["Install"]
+}
+
+action "Pytest" {
   uses = "nolanbconaway/python-actions@master"
   args = "pytest . -v"
-  needs = ["Black", "Pydocstyle"]
+  needs = ["Black", "Pydocstyle", "Pylint"]
 }

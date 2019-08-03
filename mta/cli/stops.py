@@ -1,11 +1,9 @@
 """Command line interface."""
 
-import argparse
 import os
 
 import click
 import dotenv
-
 from mta import dateutils, metadata
 from mta.mta import get_stops
 
