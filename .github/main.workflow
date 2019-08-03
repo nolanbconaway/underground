@@ -1,7 +1,7 @@
 
-workflow "Build and Test" {
+workflow "Build, Lint, Test" {
   on = "push"
-  resolves = ["Test"]
+  resolves = ["Pytest"]
 }
 
 action "Install" {
