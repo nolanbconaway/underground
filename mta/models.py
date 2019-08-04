@@ -1,7 +1,7 @@
 """Pydantic data models for MTA GFTS data."""
 
 import typing
-from operator import attrgetter, itemgetter
+from operator import attrgetter
 
 import pendulum
 import pydantic

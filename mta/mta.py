@@ -5,7 +5,7 @@ import time
 import google
 import requests
 
-from mta import dateutils, metadata
+from mta import metadata
 from mta.models import GTFSEmptyError, SubwayFeed
 
 
