@@ -23,7 +23,7 @@ action "Pydocstyle" {
 
 action "Pylint" {
   uses = "nolanbconaway/python-actions@master"
-  args = "pylint mta test -d C0303,C0412,C0330,E1120"
+  args = "pylint mta test -d C0303,C0412,C0330,E1120,R0201,E0213,R0903"
   needs = ["Install"]
 }
 
