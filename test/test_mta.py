@@ -2,7 +2,7 @@
 
 import json
 
-from mta import mta
+from mta.models import SubwayFeed
 
 # some data that i copied and edited
 GTFS_DATA = json.loads(
@@ -65,5 +65,5 @@ GTFS_DATA = json.loads(
 
 def test_extract_stop_dict():
     """Test that the correct train times are extracted."""
-    res = mta.extract_stop_dict(GTFS_DATA)
+    res = SubwayFeed(**GTFS_DATA).extract_stop_dict()
     assert len(res["7"]["702N"]) == 2
