@@ -58,7 +58,7 @@ def main(route, fmt, retries, api_key, timezone):
     # echo the result
     for stop_id, departures in stops.items():
         departures_formatted = map(str, map(format_fun, sorted(departures)))
-        click.echo(f"""{stop_id}  {' '.join(departures_formatted)}""")
+        click.echo(f"""{stop_id} {' '.join(departures_formatted)}""")
 
 
 if __name__ == "__main__":
