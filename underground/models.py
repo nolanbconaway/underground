@@ -1,10 +1,11 @@
 """Pydantic data models for MTA GFTS data."""
 
+import datetime
 import typing
 from operator import attrgetter
 
-import pendulum
 import pydantic
+import pytz
 from google.transit import gtfs_realtime_pb2
 from protobuf_to_dict import protobuf_to_dict
 
@@ -18,31 +19,31 @@ class GTFSEmptyError(Exception):
 class UnixTimestamp(pydantic.BaseModel):
     """A unix timestamp model."""
 
-    time: pendulum.DateTime
+    time: datetime.datetime
 
     @property
     def timestamp_nyc(self):
         """Return the NYC datetime."""
-        return pendulum.instance(self.time).in_tz(dateutils.DEFAULT_TIMEZONE)
+        return self.time.astimezone(pytz.timezone(dateutils.DEFAULT_TIMEZONE))
 
 
 class FeedHeader(pydantic.BaseModel):
     """Data model for the feed header."""
 
     gtfs_realtime_version: str
-    timestamp: pendulum.DateTime
+    timestamp: datetime.datetime
 
     @property
     def timestamp_nyc(self):
         """Return the NYC datetime of the header."""
-        return pendulum.instance(self.timestamp).in_tz(dateutils.DEFAULT_TIMEZONE)
+        return self.timestamp.astimezone(pytz.timezone(dateutils.DEFAULT_TIMEZONE))
 
 
 class Trip(pydantic.BaseModel):
     """Model describing a train trip."""
 
     trip_id: str
-    start_time: pendulum.Time
+    start_time: datetime.time
     start_date: int
     route_id: str
 
@@ -99,7 +100,7 @@ class Vehicle(pydantic.BaseModel):
     """Data model for the vehicle feed message."""
 
     trip: Trip
-    timestamp: pendulum.DateTime = None
+    timestamp: datetime.datetime = None
     current_stop_sequence: int = None
     stop_id: str
 

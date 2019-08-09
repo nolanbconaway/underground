@@ -58,8 +58,8 @@ def epoch_to_datetime(
 
     """
     return (
-        datetime.datetime.utcfromtimestamp(epoch)
-        .replace(tzinfo=pytz.timezone("UTC"))
+        pytz.timezone("UTC")
+        .localize(datetime.datetime.utcfromtimestamp(epoch))
         .astimezone(pytz.timezone(timezone))
     )
 
