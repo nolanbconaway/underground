@@ -15,16 +15,7 @@ from underground.models import SubwayFeed
     "fmt",
     default="%H:%M",
     type=str,
-    help="strftime format for stop times.",
-)
-@click.option(
-    "-e",
-    "--epoch",
-    "epoch",
-    default=False,
-    is_flag=True,
-    type=bool,
-    help="Option to print times as unix timestamps. If set --format will be ignored.",
+    help="strftime format for stop times. Use `epoch` for a unix timestamp.",
 )
 @click.option(
     "-r",
@@ -47,7 +38,7 @@ from underground.models import SubwayFeed
     default=dateutils.DEFAULT_TIMEZONE,
     help="Output timezone. Ignored if --epoch. Default to NYC time.",
 )
-def main(route, fmt, epoch, retries, api_key, timezone):
+def main(route, fmt, retries, api_key, timezone):
     """Print out train departure times for all stops on a subway line."""
     # get feed data
     stops = (
@@ -59,7 +50,7 @@ def main(route, fmt, epoch, retries, api_key, timezone):
     )
 
     # figure out how to format it
-    if epoch:
+    if fmt == "epoch":
         format_fun = dateutils.datetime_to_epoch
     else:
         format_fun = lambda x: x.astimezone(pytz.timezone(timezone)).strftime(fmt)

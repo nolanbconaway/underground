@@ -131,7 +131,6 @@ class SubwayFeed(pydantic.BaseModel):
             An instance of the SubwayFeed class with the reuqested data.
         
         """
-
         return SubwayFeed(**feed.request(**kw, process_response=True))
 
     def extract_stop_dict(self) -> dict:
