@@ -1,8 +1,9 @@
 """Datetime utilities for the module."""
 
+import datetime
 import typing
 
-import pendulum
+import pytz
 
 # because its for the NYC subway
 DEFAULT_TIMEZONE = "US/Eastern"
@@ -10,7 +11,7 @@ DEFAULT_TIMEZONE = "US/Eastern"
 
 def current_time(
     timezone: str = DEFAULT_TIMEZONE, epoch: bool = False
-) -> typing.Union[pendulum.DateTime, int]:
+) -> typing.Union[datetime.datetime, int]:
     """Get the current datetime in the timezone.
     
     Optionally, get the epoch time via epoch=True.
@@ -28,15 +29,18 @@ def current_time(
         Current time.
 
     """
-    if epoch:
-        return pendulum.now("utc").int_timestamp
+    # timezone aware utc time
+    utcnow = datetime.datetime.now(pytz.timezone("UTC"))
 
-    return pendulum.now(timezone)
+    if epoch:
+        return int(utcnow.timestamp())
+
+    return utcnow.astimezone(pytz.timezone(timezone))
 
 
 def epoch_to_datetime(
     epoch: int, timezone: str = DEFAULT_TIMEZONE
-) -> pendulum.DateTime:
+) -> datetime.datetime:
     """Convert epoch time into a datetime in the timezone.
     
     Epoch is assumed to be the unix time in UTC.
@@ -53,10 +57,14 @@ def epoch_to_datetime(
     datetime
 
     """
-    return pendulum.from_timestamp(epoch, tz=timezone)
+    return (
+        datetime.datetime.utcfromtimestamp(epoch)
+        .replace(tzinfo=pytz.timezone("UTC"))
+        .astimezone(pytz.timezone(timezone))
+    )
 
 
-def datetime_to_epoch(dttm: pendulum.DateTime) -> int:
+def datetime_to_epoch(dttm: datetime.datetime) -> int:
     """Return a unix timestmap from a datetime.
     
     Parameters
@@ -68,10 +76,10 @@ def datetime_to_epoch(dttm: pendulum.DateTime) -> int:
     int
 
     """
-    return int(dttm.timestamp())
+    return int(dttm.astimezone(pytz.timezone("UTC")).timestamp())
 
 
-def datetime_to_timestring(dttm: pendulum.DateTime) -> str:
+def datetime_to_timestring(dttm: datetime.datetime) -> str:
     """Convert a datetime to a time string reading HH:MM.
     
     Parameters

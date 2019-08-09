@@ -1,13 +1,13 @@
 """Dateutils tests."""
 
-import pendulum
+import datetime
 
 from underground import dateutils
 
 
 def test_current_time_datetime():
     """Test that current time returns a datetime by default."""
-    assert isinstance(dateutils.current_time(), pendulum.DateTime)
+    assert isinstance(dateutils.current_time(), datetime.datetime)
 
 
 def test_current_time_epoch_int():
@@ -24,7 +24,7 @@ def test_current_time_working():
 
 def test_epoch_to_datetime():
     """Test that epoch_to_datetime returns datetime."""
-    assert isinstance(dateutils.epoch_to_datetime(0), pendulum.DateTime)
+    assert isinstance(dateutils.epoch_to_datetime(0), datetime.datetime)
 
 
 def test_datetime_to_epoch():
