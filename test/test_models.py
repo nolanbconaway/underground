@@ -1,8 +1,12 @@
 """Dateutils tests."""
 
+import datetime
 import json
 
-from underground.models import SubwayFeed
+import pytz
+
+from underground.dateutils import DEFAULT_TIMEZONE
+from underground.models import SubwayFeed, UnixTimestamp
 
 # some data that i copied and edited
 GTFS_DATA = json.loads(
@@ -10,7 +14,7 @@ GTFS_DATA = json.loads(
 {
     "header": {
         "gtfs_realtime_version": "1.0",
-        "timestamp": 1564142408
+        "timestamp": 0
     },
     "entity": [
         {
@@ -63,7 +67,17 @@ GTFS_DATA = json.loads(
 )
 
 
+def test_unix_timestamp():
+    """Test that datetimes are handled correctly."""
+    unix_ts = UnixTimestamp(time=0)
+    epoch_time = datetime.datetime(1970, 1, 1, 0, 0, 0, 0, pytz.timezone("UTC"))
+    assert unix_ts.time == epoch_time
+    assert unix_ts.timestamp_nyc == epoch_time.astimezone(
+        pytz.timezone(DEFAULT_TIMEZONE)
+    )
+
+
 def test_extract_stop_dict():
     """Test that the correct train times are extracted."""
-    res = SubwayFeed(**GTFS_DATA).extract_stop_dict()
-    assert len(res["7"]["702N"]) == 2
+    feed = SubwayFeed(**GTFS_DATA).extract_stop_dict()
+    assert len(feed["7"]["702N"]) == 2
