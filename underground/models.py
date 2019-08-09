@@ -6,14 +6,8 @@ from operator import attrgetter
 
 import pydantic
 import pytz
-from google.transit import gtfs_realtime_pb2
-from protobuf_to_dict import protobuf_to_dict
 
-from underground import dateutils, metadata
-
-
-class GTFSEmptyError(Exception):
-    """Thrown when the GTFS data is empty."""
+from underground import dateutils, feed, metadata
 
 
 class UnixTimestamp(pydantic.BaseModel):
@@ -122,17 +116,23 @@ class SubwayFeed(pydantic.BaseModel):
     header: FeedHeader
     entity: typing.List[Entity]
 
-    @classmethod
-    def from_content(cls, gtfs_data):
-        """Parse raw GTFS data into a pydantic model."""
-        feed = gtfs_realtime_pb2.FeedMessage()
-        feed.ParseFromString(gtfs_data)
-        feed_dict = protobuf_to_dict(feed)
+    @staticmethod
+    def request(**kw):
+        """Request feed data from the MTA.
+        
+        Parameters
+        ----------
+        **kw 
+            Passed to underground.feed.request
 
-        if not feed_dict or "entity" not in feed_dict:
-            raise GTFSEmptyError
+        Returns
+        -------
+        SubwayFeed
+            An instance of the SubwayFeed class with the reuqested data.
+        
+        """
 
-        return cls(**feed_dict)
+        return SubwayFeed(**feed.request(**kw, process_response=True))
 
     def extract_stop_dict(self) -> dict:
         """Get the departure times for all stops in the feed.

@@ -1,14 +1,10 @@
-"""Command line interface."""
-
-import datetime
-import os
+"""Get upcoming stops along a train route."""
 
 import click
-import dotenv
 import pytz
 
 from underground import dateutils, metadata
-from underground.mta import get_stops
+from underground.models import SubwayFeed
 
 
 @click.command()
@@ -42,7 +38,7 @@ from underground.mta import get_stops
     "--api-key",
     "api_key",
     default=None,
-    help="MTA API key. Will be read from $API_KEY if not provided.",
+    help="MTA API key. Will be read from $MTA_API_KEY if not provided.",
 )
 @click.option(
     "-t",
@@ -53,26 +49,22 @@ from underground.mta import get_stops
 )
 def main(route, fmt, epoch, retries, api_key, timezone):
     """Print out train departure times for all stops on a subway line."""
-    # get api key from env if not provided
-    if api_key is None:
-        if os.path.exists(".env"):
-            dotenv.load_dotenv()
-
-        api_key = os.getenv("MTA_API_KEY")
-
-        if api_key is None:
-            raise click.ClickException("No MTA_API_KEY set!")
-
     # get feed data
-    stops = get_stops(
-        api_key=api_key, feed_id=metadata.ROUTE_FEED_MAP.get(route), retries=retries
-    ).get(route, dict())
+    stops = (
+        SubwayFeed.request(
+            api_key=api_key, feed_id=metadata.ROUTE_FEED_MAP.get(route), retries=retries
+        )
+        .extract_stop_dict()
+        .get(route, dict())
+    )
 
+    # figure out how to format it
     if epoch:
         format_fun = dateutils.datetime_to_epoch
     else:
         format_fun = lambda x: x.astimezone(pytz.timezone(timezone)).strftime(fmt)
 
+    # echo the result
     for stop_id, departures in stops.items():
         departures_formatted = map(str, map(format_fun, sorted(departures)))
         click.echo(f"""{stop_id}  {' '.join(departures_formatted)}""")
