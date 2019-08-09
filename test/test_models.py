@@ -11,64 +11,6 @@ from underground.models import SubwayFeed, UnixTimestamp
 
 from . import DATA_DIR
 
-# some data that i copied and edited
-GTFS_DATA = json.loads(
-    """
-{
-    "header": {
-        "gtfs_realtime_version": "1.0",
-        "timestamp": 0
-    },
-    "entity": [
-        {
-            "id": "0000077",
-            "trip_update": {
-                "trip": {
-                    "trip_id": "043100_7..N",
-                    "start_time": "07:11:00",
-                    "start_date": "20190726",
-                    "route_id": "7"
-                },
-                "stop_time_update": [
-                    {
-                        "arrival": {
-                            "time": 0
-                        },
-                        "departure": {
-                            "time": 0
-                        },
-                        "stop_id": "702N"
-                    }
-                ]
-            }
-        },
-        {
-            "id": "0000097",
-            "trip_update": {
-                "trip": {
-                    "trip_id": "043600_7..N",
-                    "start_time": "07:16:00",
-                    "start_date": "20190726",
-                    "route_id": "7"
-                },
-                "stop_time_update": [
-                    {
-                        "arrival": {
-                            "time": 60
-                        },
-                        "departure": {
-                            "time": 60
-                        },
-                        "stop_id": "702N"
-                    }
-                ]
-            }
-        }
-    ]       
-}
-"""
-)
-
 
 def test_unix_timestamp():
     """Test that datetimes are handled correctly."""
@@ -81,8 +23,13 @@ def test_unix_timestamp():
 
 
 def test_extract_stop_dict():
-    """Test that the correct train times are extracted."""
-    stops = SubwayFeed(**GTFS_DATA).extract_stop_dict()
+    """Test that the correct train times are extracted.
+    
+    Going to use a dummy JSON file that I have edited.
+    """
+    with open(os.path.join(DATA_DIR, "sample_edited.json"), "r") as f:
+        sample_data = json.load(f)
+    stops = SubwayFeed(**sample_data).extract_stop_dict()
     assert len(stops["7"]["702N"]) == 2
 
 
