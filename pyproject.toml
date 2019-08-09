@@ -3,11 +3,11 @@ requires = ["poetry>=0.12"]
 build-backend = "poetry.masonry.api"
 
 [tool.poetry]
-name = "mta"
+name = "underground"
 version = "0.1.0"
 description = ""
 authors = ["Nolan Conaway <nolanbconaway@gmail.com>"]
-packages = [{ include = "mta" }]
+packages = [{ include = "underground" }]
 
 [tool.poetry.dependencies]
 python = "^3.6"
@@ -28,7 +28,7 @@ tox = "^3.13"
 pylint = "^2.3"
 
 [tool.poetry.scripts]
-mta = "mta.cli.cli:entry_point"
+underground = "underground.cli.cli:entry_point"
 
 [tool.poetry.extras]
 cli = ["python-dotenv", "click"]

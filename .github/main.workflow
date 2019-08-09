@@ -11,19 +11,19 @@ action "Install" {
 
 action "Black" {
   uses = "nolanbconaway/python-actions@master"
-  args = "black mta test --check --verbose"
+  args = "black underground test --check --verbose"
   needs = ["Install"]
 }
 
 action "Pydocstyle" {
   uses = "nolanbconaway/python-actions@master"
-  args = "pydocstyle mta test --verbose"
+  args = "pydocstyle underground test --verbose"
   needs = ["Install"]
 }
 
 action "Pylint" {
   uses = "nolanbconaway/python-actions@master"
-  args = "pylint mta test -d C0303,C0412,C0330,E1120,R0201,E0213,R0903"
+  args = "pylint underground test -d C0303,C0412,C0330,E1120,R0201,E0213,R0903"
   needs = ["Install"]
 }
 

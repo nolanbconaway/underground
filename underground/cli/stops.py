@@ -4,8 +4,9 @@ import os
 
 import click
 import dotenv
-from mta import dateutils, metadata
-from mta.mta import get_stops
+
+from underground import dateutils, metadata
+from underground.mta import get_stops
 
 
 @click.command()

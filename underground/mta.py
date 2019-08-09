@@ -5,8 +5,8 @@ import time
 import google
 import requests
 
-from mta import metadata
-from mta.models import GTFSEmptyError, SubwayFeed
+from underground import metadata
+from underground.models import GTFSEmptyError, SubwayFeed
 
 
 def request_feed_data(api_key: str, feed_id: int, retries: int = 100) -> dict:

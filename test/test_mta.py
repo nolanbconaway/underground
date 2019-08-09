@@ -2,7 +2,7 @@
 
 import json
 
-from mta.models import SubwayFeed
+from underground.models import SubwayFeed
 
 # some data that i copied and edited
 GTFS_DATA = json.loads(
