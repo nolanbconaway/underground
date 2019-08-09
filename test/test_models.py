@@ -1,12 +1,15 @@
-"""Dateutils tests."""
+"""Data model tests."""
 
 import datetime
 import json
+import os
 
 import pytz
 
 from underground.dateutils import DEFAULT_TIMEZONE
 from underground.models import SubwayFeed, UnixTimestamp
+
+from . import DATA_DIR
 
 # some data that i copied and edited
 GTFS_DATA = json.loads(
@@ -79,5 +82,20 @@ def test_unix_timestamp():
 
 def test_extract_stop_dict():
     """Test that the correct train times are extracted."""
-    feed = SubwayFeed(**GTFS_DATA).extract_stop_dict()
-    assert len(feed["7"]["702N"]) == 2
+    stops = SubwayFeed(**GTFS_DATA).extract_stop_dict()
+    assert len(stops["7"]["702N"]) == 2
+
+
+def test_on_actual_json():
+    """Test the pydantic class works on a sample file.
+
+    I got the file right from the MTA so this should be a realistic example.
+    """
+    with open(os.path.join(DATA_DIR, "sample_valid.json"), "r") as f:
+        sample_data = json.load(f)
+
+    feed = SubwayFeed(**sample_data)
+
+    # I'm OK so long as there is no exception TBH.
+    assert feed.entity is not None
+    assert isinstance(feed.extract_stop_dict(), dict)
