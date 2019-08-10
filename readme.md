@@ -37,6 +37,10 @@ FEED_ID = metadata.ROUTE_FEED_MAP[ROUTE]
 # request and serialize the feed data.
 feed = SubwayFeed.request(FEED_ID, api_key=API_KEY)
 
+# request will automatically try to read from $MTA_API_KEY if a key is not provided,
+# so this also works:
+feed = SubwayFeed.request(FEED_ID)
+
 # extract train stops on each line
 q_train_stops = feed.extract_stop_dict()[ROUTE]
 ```
@@ -99,6 +103,7 @@ Options:
 Use it like
 
 ```
+$ export MTA_API_KEY='...'
 $ underground feed 16 --json > feed_16.json
 ```
 
