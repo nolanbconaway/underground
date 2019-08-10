@@ -427,11 +427,8 @@ optional = false
 python-versions = ">=2.7"
 version = "0.5.2"
 
-[extras]
-cli = ["click"]
-
 [metadata]
-content-hash = "ff7b568bed5f21bdae62a02b74441ce8149de6143f6547fca33c5a5da9891dde"
+content-hash = "c1407696c91c48bf832d38a48e2bafbc7dcc7dcd92d1e63b1212df58e6b2abd1"
 python-versions = "^3.6"
 
 [metadata.hashes]

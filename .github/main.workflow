@@ -6,7 +6,7 @@ workflow "Build, Lint, Test" {
 
 action "Install" {
   uses = "nolanbconaway/python-actions@master"
-  args = "pip install poetry && poetry install --extras cli && poetry shell && which python"
+  args = "pip install poetry && poetry install && poetry shell && which python"
 }
 
 action "Black" {
