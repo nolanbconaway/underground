@@ -17,7 +17,7 @@ action "Black" {
 
 action "Pydocstyle" {
   uses = "nolanbconaway/python-actions@master"
-  args = "pydocstyle underground test --verbose"
+  args = "pydocstyle underground test/*.py --verbose"
   needs = ["Install"]
 }
 
