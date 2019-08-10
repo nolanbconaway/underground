@@ -1,0 +1,46 @@
+name: underground
+
+on: push
+
+jobs:
+  build:
+
+    runs-on: ${{ matrix.os }}
+    strategy:
+      max-parallel: 4
+      matrix:
+        python-version: [3.5, 3.6, 3.7]
+        os: [ubuntu-latest, macOS-latest]
+
+    steps:
+    - uses: actions/checkout@master
+
+    - name: Install
+      uses: nolanbconaway/python-actions@master
+      with:
+        version: ${{ matrix.python-version }}
+        args: pip install poetry && poetry install && poetry shell && which python
+    
+    - name: Pylint
+      uses: nolanbconaway/python-actions@master
+      with:
+        version: ${{ matrix.python-version }}
+        args: pylint underground test -d C0303,C0412,C0330,E1120,R0201,E0213,R0903,R0801
+    
+    - name: Pydocstyle
+      uses: nolanbconaway/python-actions@master
+      with:
+        version: ${{ matrix.python-version }}
+        args: pydocstyle underground test/*.py --verbose
+    
+    - name: Black
+      uses: nolanbconaway/python-actions@master
+      with:
+        version: ${{ matrix.python-version }}
+        args: black underground test --check --verbose
+    
+    - name: Pytest
+      uses: nolanbconaway/python-actions@master
+      with:
+        version: ${{ matrix.python-version }}
+        args: pytest . -v
