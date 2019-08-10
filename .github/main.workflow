@@ -6,24 +6,24 @@ workflow "Build, Lint, Test" {
 
 action "Install" {
   uses = "nolanbconaway/python-actions@master"
-  args = "pip install poetry && poetry install --extras cli && poetry shell && which python"
+  args = "pip install poetry && poetry install && poetry shell && which python"
 }
 
 action "Black" {
   uses = "nolanbconaway/python-actions@master"
-  args = "black mta test --check --verbose"
+  args = "black underground test --check --verbose"
   needs = ["Install"]
 }
 
 action "Pydocstyle" {
   uses = "nolanbconaway/python-actions@master"
-  args = "pydocstyle mta test --verbose"
+  args = "pydocstyle underground test/*.py --verbose"
   needs = ["Install"]
 }
 
 action "Pylint" {
   uses = "nolanbconaway/python-actions@master"
-  args = "pylint mta test -d C0303,C0412,C0330,E1120,R0201,E0213,R0903"
+  args = "pylint underground test -d C0303,C0412,C0330,E1120,R0201,E0213,R0903,R0801"
   needs = ["Install"]
 }
 

@@ -4,42 +4,44 @@
 
 This is a set of Python utilities that I use to deal with [real-time NYC subway data](https://datamine.mta.info/).
 
-I usually want to know when trains are going to depart a specific stop along a specific train line, so right now the tools are only for that.
+I usually want to know when trains are going to depart a specific stop along a specific train line, so right now the tools are mostly for that. But I tried to write them to support arbitrary functionality.
 
 ## Install
 
-```sh
-pip install git+https://github.com/nolanbconaway/mta.git#egg=mta
-```
-
-If you'd like to the use the command line tools, you'll need some extra requirements:
+Not on pypi just yet, so:
 
 ```sh
-pip install git+https://github.com/nolanbconaway/mta.git#egg=mta[cli]
+pip install git+https://github.com/nolanbconaway/underground.git#egg=underground
 ```
+
+To request data from the MTA, you'll also need a free API key. [Register here](https://datamine.mta.info/user/register).
 
 ## Python API
 
-To request data on when trains are arriving stops, you need to know [which feed to request](https://datamine.mta.info/list-of-feeds) for the train line you'd like. You'll also need an API key from the MTA, which is free.
+
 
 Once you have your API key, use the Python API like:
 
 ```python
 import os
 
-from mta import mta, metadata
+from underground import metadata
+from underground.models import SubwayFeed
 
-API_KEY = os.getenv('API_KEY')
+API_KEY = os.getenv('MTA_API_KEY')
 ROUTE = 'Q'
 
 # get feed id for the Q train route
 FEED_ID = metadata.ROUTE_FEED_MAP[ROUTE]
 
-# get all Q stops.
-q_train_stops = mta.get_stops(API_KEY, FEED_ID)[ROUTE]
+# request and serialize the feed data.
+feed = SubwayFeed.request(FEED_ID, api_key=API_KEY)
+
+# extract train stops on each line
+q_train_stops = feed.extract_stop_dict()[ROUTE]
 ```
 
-`get_stops` will return a dictionary of dictionaries, like:
+`feed.extract_stop_dict` will return a dictionary of dictionaries, like:
 
 ```
 {
@@ -56,36 +58,83 @@ q_train_stops = mta.get_stops(API_KEY, FEED_ID)[ROUTE]
 }
 ```
 
+> Note: future functionality to be written around the `SubwayFeed` class.
+
 ## CLI
 
-A command line tool is provided so you can access the upcoming stops from each train line.
+The `underground` command line tool is also installed with the package.
 
-Stops are printed to stdout in the format `stop_id  t1, t2, ... tn`.
+```
+$ underground --help                                
+Usage: underground [OPTIONS] COMMAND [ARGS]...
 
-```sh
-$ export API_KEY='...'
-$ mta stops Q | tail -2
-Q05S  19:01 19:09 19:16 19:25 19:34 19:44 19:51 19:58
-Q04S  19:03 19:11 19:18 19:27 19:36 19:46 19:53 20:00
-$ mta stops --help
-Usage: mta stops [OPTIONS]
-                 [N|M|R|4|L|GS|D|G|SI|J|Q|6|2|1|W|C|B|Z|H|7|A|E|FS|F|5]
+  Command line handlers for MTA realtime data.
+
+Options:
+  --help  Show this message and exit.
+
+Commands:
+  feed   Request an MTA feed.
+  stops  Print out train departure times for all stops on a subway line.
+```
+
+### `feed`
+
+```
+$ underground feed --help
+Usage: underground feed [OPTIONS] [1|2|36|11|16|51|21|26|31]
+
+  Request an MTA feed.
+
+Options:
+  --api-key TEXT         MTA API key. Will be read from $MTA_API_KEY if not
+                         provided.
+  --json                 Option to output the feed data as JSON. Otherwise
+                         output will be bytes.
+  -r, --retries INTEGER  Retry attempts in case of API connection failure.
+                         Default 100.
+  --help                 Show this message and exit.
+```
+
+Use it like
+
+```
+$ underground feed 16 --json > feed_16.json
+```
+
+### `stops`
+
+```
+$ underground stops --help
+Usage: underground stops [OPTIONS] [H|M|D|1|Z|A|N|GS|SI|J|G|Q|L|B|R|F|E|2|7|W|
+                         6|4|C|5|FS]
 
   Print out train departure times for all stops on a subway line.
 
 Options:
-  -f, --format TEXT  strftime format for stop times.
-  -e, --epoch        Option to print times as unix timestamps. If set --format
-                     will be ignored.
-  --retries INTEGER  Retry attempts in case of API connection failure. Default
-                     100.
-  --api-key TEXT     MTA API key. Will be read from $API_KEY if not provided.
-  --help             Show this message and exit.
+  -f, --format TEXT      strftime format for stop times. Use `epoch` for a
+                         unix timestamp.
+  -r, --retries INTEGER  Retry attempts in case of API connection failure.
+                         Default 100.
+  --api-key TEXT         MTA API key. Will be read from $MTA_API_KEY if not
+                         provided.
+  -t, --timezone TEXT    Output timezone. Ignored if --epoch. Default to NYC
+                         time.
+  --help                 Show this message and exit.
 ```
 
-If you know your stop id (stop IDs can be found in [stops.txt](http://web.mta.info/developers/data/nyct/subway/google_transit.zip)), you can just grep the results:
+Stops are printed to stdout in the format `stop_id  t1, t2, ... tn`.
 
 ```sh
-$ mta stops Q | grep Q05S
+$ export MTA_API_KEY='...'
+$ underground stops Q | tail -2
+Q05S  19:01 19:09 19:16 19:25 19:34 19:44 19:51 19:58
+Q04S  19:03 19:11 19:18 19:27 19:36 19:46 19:53 20:00
+```
+
+If you know your stop id (stop IDs can be found in [stops.txt](http://web.mta.info/developers/data/nyct/subway/google_transit.zip)), you can grep the results:
+
+```sh
+$ underground stops Q | grep Q05S
 Q05S  19:09 19:16 19:25 19:34 19:44 19:51 19:58
 ```

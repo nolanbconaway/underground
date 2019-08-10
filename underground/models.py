@@ -1,48 +1,43 @@
 """Pydantic data models for MTA GFTS data."""
 
+import datetime
 import typing
 from operator import attrgetter
 
-import pendulum
 import pydantic
-from google.transit import gtfs_realtime_pb2
-from protobuf_to_dict import protobuf_to_dict
+import pytz
 
-from mta import dateutils, metadata
-
-
-class GTFSEmptyError(Exception):
-    """Thrown when the GTFS data is empty."""
+from underground import dateutils, feed, metadata
 
 
 class UnixTimestamp(pydantic.BaseModel):
     """A unix timestamp model."""
 
-    time: pendulum.DateTime
+    time: datetime.datetime
 
     @property
     def timestamp_nyc(self):
         """Return the NYC datetime."""
-        return pendulum.instance(self.time).in_tz(dateutils.DEFAULT_TIMEZONE)
+        return self.time.astimezone(pytz.timezone(dateutils.DEFAULT_TIMEZONE))
 
 
 class FeedHeader(pydantic.BaseModel):
     """Data model for the feed header."""
 
     gtfs_realtime_version: str
-    timestamp: pendulum.DateTime
+    timestamp: datetime.datetime
 
     @property
     def timestamp_nyc(self):
         """Return the NYC datetime of the header."""
-        return pendulum.instance(self.timestamp).in_tz(dateutils.DEFAULT_TIMEZONE)
+        return self.timestamp.astimezone(pytz.timezone(dateutils.DEFAULT_TIMEZONE))
 
 
 class Trip(pydantic.BaseModel):
     """Model describing a train trip."""
 
     trip_id: str
-    start_time: pendulum.Time
+    start_time: datetime.time
     start_date: int
     route_id: str
 
@@ -99,7 +94,7 @@ class Vehicle(pydantic.BaseModel):
     """Data model for the vehicle feed message."""
 
     trip: Trip
-    timestamp: pendulum.DateTime = None
+    timestamp: datetime.datetime = None
     current_stop_sequence: int = None
     stop_id: str
 
@@ -121,17 +116,22 @@ class SubwayFeed(pydantic.BaseModel):
     header: FeedHeader
     entity: typing.List[Entity]
 
-    @classmethod
-    def from_content(cls, gtfs_data):
-        """Parse raw GTFS data into a pydantic model."""
-        feed = gtfs_realtime_pb2.FeedMessage()
-        feed.ParseFromString(gtfs_data)
-        feed_dict = protobuf_to_dict(feed)
+    @staticmethod
+    def request(*args, **kw):
+        """Request feed data from the MTA.
+        
+        Parameters
+        ----------
+        **kw 
+            Passed to underground.feed.request
 
-        if not feed_dict or "entity" not in feed_dict:
-            raise GTFSEmptyError
-
-        return cls(**feed_dict)
+        Returns
+        -------
+        SubwayFeed
+            An instance of the SubwayFeed class with the reuqested data.
+        
+        """
+        return SubwayFeed(**feed.request(*args, **kw, process_response=True))
 
     def extract_stop_dict(self) -> dict:
         """Get the departure times for all stops in the feed.
