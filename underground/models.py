@@ -117,7 +117,7 @@ class SubwayFeed(pydantic.BaseModel):
     entity: typing.List[Entity]
 
     @staticmethod
-    def request(**kw):
+    def request(*args, **kw):
         """Request feed data from the MTA.
         
         Parameters
@@ -131,7 +131,7 @@ class SubwayFeed(pydantic.BaseModel):
             An instance of the SubwayFeed class with the reuqested data.
         
         """
-        return SubwayFeed(**feed.request(**kw, process_response=True))
+        return SubwayFeed(**feed.request(*args, **kw, process_response=True))
 
     def extract_stop_dict(self) -> dict:
         """Get the departure times for all stops in the feed.
