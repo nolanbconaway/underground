@@ -1,6 +1,6 @@
 # Python MTA Utilities
 
-[![my badge](https://action-badges.now.sh/nolanbconaway/mta)](https://github.com/nolanbconaway/mta/actions)
+[![Build Status](https://img.shields.io/endpoint.svg?url=https%3A%2F%2Factions-badge.atrox.dev%2Fnolanbconaway%2Funderground%2Fbadge&style=flat)](https://actions-badge.atrox.dev/nolanbconaway/underground/goto)
 
 This is a set of Python utilities that I use to deal with [real-time NYC subway data](https://datamine.mta.info/).
 
