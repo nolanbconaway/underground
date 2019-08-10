@@ -27,8 +27,8 @@ def test_extract_stop_dict():
     
     Going to use a dummy JSON file that I have edited.
     """
-    with open(os.path.join(DATA_DIR, "sample_edited.json"), "r") as f:
-        sample_data = json.load(f)
+    with open(os.path.join(DATA_DIR, "sample_edited.json"), "r") as file:
+        sample_data = json.load(file)
     stops = SubwayFeed(**sample_data).extract_stop_dict()
     assert len(stops["7"]["702N"]) == 2
 
@@ -38,8 +38,8 @@ def test_on_actual_json():
 
     I got the file right from the MTA so this should be a realistic example.
     """
-    with open(os.path.join(DATA_DIR, "sample_valid.json"), "r") as f:
-        sample_data = json.load(f)
+    with open(os.path.join(DATA_DIR, "sample_valid.json"), "r") as file:
+        sample_data = json.load(file)
 
     feed = SubwayFeed(**sample_data)
 

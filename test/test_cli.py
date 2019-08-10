@@ -5,7 +5,6 @@ from unittest import mock
 
 from click.testing import CliRunner
 
-from underground.cli import feed as feed_cli
 from underground.cli import stops as stops_cli
 from underground.models import SubwayFeed
 
@@ -15,8 +14,8 @@ from . import DATA_DIR
 @mock.patch("underground.models.SubwayFeed.request")
 def test_stops_epoch(feed_request):
     """Test the epoch handler in the stops cli."""
-    with open(os.path.join(DATA_DIR, "sample_edited.json"), "r") as f:
-        feed_request.return_value = SubwayFeed(**json.load(f))
+    with open(os.path.join(DATA_DIR, "sample_edited.json"), "r") as file:
+        feed_request.return_value = SubwayFeed(**json.load(file))
 
     runner = CliRunner()
     result = runner.invoke(stops_cli.main, ["7", "-f", "epoch"])
@@ -27,8 +26,8 @@ def test_stops_epoch(feed_request):
 @mock.patch("underground.models.SubwayFeed.request")
 def test_stops_format(feed_request):
     """Test the format handler in the stops cli."""
-    with open(os.path.join(DATA_DIR, "sample_edited.json"), "r") as f:
-        feed_request.return_value = SubwayFeed(**json.load(f))
+    with open(os.path.join(DATA_DIR, "sample_edited.json"), "r") as file:
+        feed_request.return_value = SubwayFeed(**json.load(file))
 
     runner = CliRunner()
 
@@ -46,8 +45,8 @@ def test_stops_format(feed_request):
 @mock.patch("underground.models.SubwayFeed.request")
 def test_stops_timezone(feed_request):
     """Test the timezone handler in the stops cli."""
-    with open(os.path.join(DATA_DIR, "sample_edited.json"), "r") as f:
-        feed_request.return_value = SubwayFeed(**json.load(f))
+    with open(os.path.join(DATA_DIR, "sample_edited.json"), "r") as file:
+        feed_request.return_value = SubwayFeed(**json.load(file))
 
     runner = CliRunner()
 
