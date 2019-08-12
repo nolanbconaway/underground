@@ -6,15 +6,15 @@ import os
 
 import pytz
 
+from underground import SubwayFeed, models
 from underground.dateutils import DEFAULT_TIMEZONE
-from underground.models import SubwayFeed, UnixTimestamp
 
 from . import DATA_DIR
 
 
 def test_unix_timestamp():
     """Test that datetimes are handled correctly."""
-    unix_ts = UnixTimestamp(time=0)
+    unix_ts = models.UnixTimestamp(time=0)
     epoch_time = datetime.datetime(1970, 1, 1, 0, 0, 0, 0, pytz.timezone("UTC"))
     assert unix_ts.time == epoch_time
     assert unix_ts.timestamp_nyc == epoch_time.astimezone(
