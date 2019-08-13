@@ -42,7 +42,7 @@ def main(route, fmt, retries, api_key, timezone):
     """Print out train departure times for all stops on a subway line."""
     # get feed data
     stops = (
-        SubwayFeed.request(
+        SubwayFeed.get(
             api_key=api_key, feed_id=metadata.ROUTE_FEED_MAP.get(route), retries=retries
         )
         .extract_stop_dict()

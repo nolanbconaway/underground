@@ -33,11 +33,8 @@ from underground import feed, metadata
 )
 def main(feed_id, api_key, output_json, retries):
     """Request an MTA feed."""
-    data = feed.request(
-        feed_id=int(feed_id),
-        retries=retries,
-        api_key=api_key,
-        process_response=output_json,
+    data = feed.request_robust(
+        feed_id=int(feed_id), retries=retries, api_key=api_key, return_dict=output_json
     )
 
     if output_json:

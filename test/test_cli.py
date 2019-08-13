@@ -11,7 +11,7 @@ from underground.models import SubwayFeed
 from . import DATA_DIR
 
 
-@mock.patch("underground.models.SubwayFeed.request")
+@mock.patch("underground.models.SubwayFeed.get")
 def test_stops_epoch(feed_request):
     """Test the epoch handler in the stops cli."""
     with open(os.path.join(DATA_DIR, "sample_edited.json"), "r") as file:
@@ -23,7 +23,7 @@ def test_stops_epoch(feed_request):
     assert "702N 0 60" in result.output
 
 
-@mock.patch("underground.models.SubwayFeed.request")
+@mock.patch("underground.models.SubwayFeed.get")
 def test_stops_format(feed_request):
     """Test the format handler in the stops cli."""
     with open(os.path.join(DATA_DIR, "sample_edited.json"), "r") as file:
@@ -42,7 +42,7 @@ def test_stops_format(feed_request):
     assert "702N 00 00" in result.output
 
 
-@mock.patch("underground.models.SubwayFeed.request")
+@mock.patch("underground.models.SubwayFeed.get")
 def test_stops_timezone(feed_request):
     """Test the timezone handler in the stops cli."""
     with open(os.path.join(DATA_DIR, "sample_edited.json"), "r") as file:

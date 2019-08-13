@@ -117,21 +117,31 @@ class SubwayFeed(pydantic.BaseModel):
     entity: typing.List[Entity]
 
     @staticmethod
-    def request(*args, **kw):
+    def get(feed_id: int, retries: int = 100, api_key: str = None) -> "SubwayFeed":
         """Request feed data from the MTA.
         
         Parameters
         ----------
-        **kw 
-            Passed to underground.feed.request
+        feed_id : int
+            Integer feed ID, per ``https://datamine.mta.info/list-of-feeds``.
+        retries : int
+            Number of retry attempts, with 1 second timeout between attempts.
+            Set to -1 for unlimited. Default 100. 
+        api_key : str
+            MTA API key. If not provided, it will be read from the $MTA_API_KEY env 
+            variable.
 
         Returns
         -------
         SubwayFeed
-            An instance of the SubwayFeed class with the reuqested data.
+            An instance of the SubwayFeed class with the requested data.
         
         """
-        return SubwayFeed(**feed.request(*args, **kw, process_response=True))
+        return SubwayFeed(
+            **feed.request_robust(
+                feed_id=feed_id, retries=retries, api_key=api_key, return_dict=True
+            )
+        )
 
     def extract_stop_dict(self) -> dict:
         """Get the departure times for all stops in the feed.
