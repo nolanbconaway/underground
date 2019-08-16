@@ -141,3 +141,12 @@ If you know your stop id (stop IDs can be found in [stops.txt](http://web.mta.in
 $ underground stops Q | grep Q05S
 Q05S  19:09 19:16 19:25 19:34 19:44 19:51 19:58
 ```
+
+## Todo
+
+None of this is particularly important, I am happy with the API at the moment.
+
+- [ ] Better exception printing from click.
+- [ ] Pypi?
+- [ ] Markdown auto format. Check as a part of the build process.
+- [ ] Add some tooling to make finding your stop easier.
