@@ -3,6 +3,7 @@
 import datetime
 import json
 import os
+from unittest import mock
 
 import pytz
 
@@ -45,4 +46,15 @@ def test_on_actual_json():
 
     # I'm OK so long as there is no exception TBH.
     assert feed.entity is not None
+    assert isinstance(feed.extract_stop_dict(), dict)
+
+
+@mock.patch("underground.feed.request")
+def test_get(feed_request):
+    """Test the get method creates the desired object."""
+    with open(os.path.join(DATA_DIR, "sample_valid.protobuf"), "rb") as file:
+        feed_request.return_value = file.read()
+
+    feed = SubwayFeed.get(16)
+    assert isinstance(feed, SubwayFeed)
     assert isinstance(feed.extract_stop_dict(), dict)
