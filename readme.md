@@ -23,8 +23,7 @@ Once you have your API key, use the Python API like:
 ```python
 import os
 
-from underground import metadata
-from underground.models import SubwayFeed
+from underground import metadata, SubwayFeed
 
 API_KEY = os.getenv('MTA_API_KEY')
 ROUTE = 'Q'
@@ -48,13 +47,13 @@ q_train_stops = feed.extract_stop_dict()[ROUTE]
 ```
 {
   "route_1": {
-    "stop_1": [DateTime(...), DateTime(...)],
-    "stop_2": [DateTime(...), DateTime(...)],
+    "stop_1": [datetime.datetime(...), datetime.datetime(...)],
+    "stop_2": [datetime.datetime(...), datetime.datetime(...)],
     ...
   },
   "route_2": {
-    "stop_1": [DateTime(...), DateTime(...)],
-    "stop_2": [DateTime(...), DateTime(...)],
+    "stop_1": [datetime.datetime(...), datetime.datetime(...)],
+    "stop_2": [datetime.datetime(...), datetime.datetime(...)],
     ...
   }
 }
@@ -67,7 +66,7 @@ q_train_stops = feed.extract_stop_dict()[ROUTE]
 The `underground` command line tool is also installed with the package.
 
 ```
-$ underground --help                                
+$ underground --help
 Usage: underground [OPTIONS] COMMAND [ARGS]...
 
   Command line handlers for MTA realtime data.
@@ -126,20 +125,20 @@ Options:
   --help                 Show this message and exit.
 ```
 
-Stops are printed to stdout in the format `stop_id  t1, t2, ... tn`.
+Stops are printed to stdout in the format `stop_id t1 t2 ... tn`.
 
 ```sh
 $ export MTA_API_KEY='...'
 $ underground stops Q | tail -2
-Q05S  19:01 19:09 19:16 19:25 19:34 19:44 19:51 19:58
-Q04S  19:03 19:11 19:18 19:27 19:36 19:46 19:53 20:00
+Q05S 19:01 19:09 19:16 19:25 19:34 19:44 19:51 19:58
+Q04S 19:03 19:11 19:18 19:27 19:36 19:46 19:53 20:00
 ```
 
 If you know your stop id (stop IDs can be found in [stops.txt](http://web.mta.info/developers/data/nyct/subway/google_transit.zip)), you can grep the results:
 
 ```sh
 $ underground stops Q | grep Q05S
-Q05S  19:09 19:16 19:25 19:34 19:44 19:51 19:58
+Q05S 19:09 19:16 19:25 19:34 19:44 19:51 19:58
 ```
 
 ## Todo
@@ -150,3 +149,4 @@ None of this is particularly important, I am happy with the API at the moment.
 - [ ] Pypi?
 - [ ] Markdown auto format. Check as a part of the build process.
 - [ ] Add some tooling to make finding your stop easier.
+- [ ] Add method to SubwayFeed which counts trains per line/direction.
