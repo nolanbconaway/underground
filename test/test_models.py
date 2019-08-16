@@ -3,18 +3,19 @@
 import datetime
 import json
 import os
+from unittest import mock
 
 import pytz
 
+from underground import SubwayFeed, models
 from underground.dateutils import DEFAULT_TIMEZONE
-from underground.models import SubwayFeed, UnixTimestamp
 
 from . import DATA_DIR
 
 
 def test_unix_timestamp():
     """Test that datetimes are handled correctly."""
-    unix_ts = UnixTimestamp(time=0)
+    unix_ts = models.UnixTimestamp(time=0)
     epoch_time = datetime.datetime(1970, 1, 1, 0, 0, 0, 0, pytz.timezone("UTC"))
     assert unix_ts.time == epoch_time
     assert unix_ts.timestamp_nyc == epoch_time.astimezone(
@@ -45,4 +46,15 @@ def test_on_actual_json():
 
     # I'm OK so long as there is no exception TBH.
     assert feed.entity is not None
+    assert isinstance(feed.extract_stop_dict(), dict)
+
+
+@mock.patch("underground.feed.request")
+def test_get(feed_request):
+    """Test the get method creates the desired object."""
+    with open(os.path.join(DATA_DIR, "sample_valid.protobuf"), "rb") as file:
+        feed_request.return_value = file.read()
+
+    feed = SubwayFeed.get(16)
+    assert isinstance(feed, SubwayFeed)
     assert isinstance(feed.extract_stop_dict(), dict)

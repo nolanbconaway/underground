@@ -8,9 +8,7 @@ from underground import feed, metadata
 
 
 @click.command()
-@click.argument(
-    "feed_id", nargs=1, type=click.Choice(map(str, metadata.VALID_FEED_IDS))
-)
+@click.argument("feed_id", type=click.Choice([str(i) for i in metadata.VALID_FEED_IDS]))
 @click.option(
     "--api-key",
     "api_key",
@@ -33,11 +31,8 @@ from underground import feed, metadata
 )
 def main(feed_id, api_key, output_json, retries):
     """Request an MTA feed."""
-    data = feed.request(
-        feed_id=int(feed_id),
-        retries=retries,
-        api_key=api_key,
-        process_response=output_json,
+    data = feed.request_robust(
+        feed_id=int(feed_id), retries=retries, api_key=api_key, return_dict=output_json
     )
 
     if output_json:
