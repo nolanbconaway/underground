@@ -1,6 +1,6 @@
 # Python MTA Utilities
 
-[![Build Status](https://img.shields.io/endpoint.svg?url=https%3A%2F%2Factions-badge.atrox.dev%2Fnolanbconaway%2Funderground%2Fbadge&style=flat)](https://actions-badge.atrox.dev/nolanbconaway/underground/goto)
+[![GitHub Actions status](https://github.com/nolanbconaway/underground/workflows/Main%20Workflow/badge.svg)](https://github.com/nolanbconaway/underground/actions)
 
 This is a set of Python utilities that I use to deal with [real-time NYC subway data](https://datamine.mta.info/).
 
@@ -17,8 +17,6 @@ pip install git+https://github.com/nolanbconaway/underground.git#egg=underground
 To request data from the MTA, you'll also need a free API key. [Register here](https://datamine.mta.info/user/register).
 
 ## Python API
-
-
 
 Once you have your API key, use the Python API like:
 
