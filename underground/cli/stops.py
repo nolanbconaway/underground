@@ -1,7 +1,6 @@
 """Get upcoming stops along a train route."""
 
 import click
-import pytz
 
 from underground import dateutils, metadata
 from underground.models import SubwayFeed
@@ -45,7 +44,7 @@ def main(route, fmt, retries, api_key, timezone):
         SubwayFeed.get(
             api_key=api_key, feed_id=metadata.ROUTE_FEED_MAP.get(route), retries=retries
         )
-        .extract_stop_dict()
+        .extract_stop_dict(timezone=timezone)
         .get(route, dict())
     )
 
@@ -53,7 +52,7 @@ def main(route, fmt, retries, api_key, timezone):
     if fmt == "epoch":
         format_fun = dateutils.datetime_to_epoch
     else:
-        format_fun = lambda x: x.astimezone(pytz.timezone(timezone)).strftime(fmt)
+        format_fun = lambda x: x.strftime(fmt)
 
     # echo the result
     for stop_id, departures in stops.items():

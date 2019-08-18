@@ -143,8 +143,13 @@ class SubwayFeed(pydantic.BaseModel):
             )
         )
 
-    def extract_stop_dict(self) -> dict:
+    def extract_stop_dict(self, timezone: str = dateutils.DEFAULT_TIMEZONE) -> dict:
         """Get the departure times for all stops in the feed.
+
+        Parameters
+        ----------
+        timezone : str
+            Name of the timezone to return within. Default to NYC time.
 
         Returns
         -------
@@ -164,7 +169,11 @@ class SubwayFeed(pydantic.BaseModel):
         )
         # create (route, stop, time) tuples from each trip
         stops_flat = (
-            (trip.trip.route_id, stop.stop_id, stop.departure.time)
+            (
+                trip.trip.route_id,
+                stop.stop_id,
+                stop.departure.time.astimezone(pytz.timezone(timezone)),
+            )
             for trip in trip_updates_with_stops
             for stop in trip.stop_time_update
         )
