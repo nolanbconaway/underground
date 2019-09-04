@@ -159,8 +159,7 @@ class SubwayFeed(pydantic.BaseModel):
         
         """
         # filter down data to trips with an update
-        entities = filter(lambda x: x.trip_update is not None, self.entity)
-        entities_with_updates = filter(lambda x: x.trip_update is not None, entities)
+        entities_with_updates = filter(lambda x: x.trip_update is not None, self.entity)
         trip_updates = map(attrgetter("trip_update"), entities_with_updates)
 
         # grab the updates with stop times
