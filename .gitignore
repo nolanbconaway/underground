@@ -10,3 +10,4 @@ snapshot.png
 *.egg-info
 .tox
 old/
+*.lock
