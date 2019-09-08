@@ -1,11 +1,15 @@
 """Test the CLI."""
+import io
 import json
 import os
+import zipfile
 from unittest import mock
 
+import pytest
 from click.testing import CliRunner
 
 from underground.cli import feed as feed_cli
+from underground.cli import findstops as findstops_cli
 from underground.cli import stops as stops_cli
 from underground.feed import load_protobuf
 from underground.models import SubwayFeed
@@ -85,3 +89,32 @@ def test_feed_json(feed_request):
     result = runner.invoke(feed_cli.main, ["16", "--json"])
     assert result.exit_code == 0
     assert "entity" in json.loads(result.output)
+
+
+@mock.patch("underground.cli.findstops.request_data")
+@pytest.mark.parametrize("args", [["PARKSIDE"], ["parkside"], ["PARKSIDE", "av"]])
+def test_stopstxt(request_fun, args):
+    """Test the json output option."""
+    with open(os.path.join(DATA_DIR, "google_transit.zip"), "rb") as file:
+        request_fun.return_value = zipfile.ZipFile(io.BytesIO(file.read()))
+    runner = CliRunner()
+    result = runner.invoke(findstops_cli.main, args)
+    assert result.exit_code == 0
+    assert "D27N" in result.output
+    assert "D27S" in result.output
+
+
+@mock.patch("underground.cli.findstops.request_data")
+@pytest.mark.parametrize("args", [["PARKSIDE"], ["parkside"], ["PARKSIDE", "av"]])
+def test_stopstxt_json(request_fun, args):
+    """Test the json output option."""
+    with open(os.path.join(DATA_DIR, "google_transit.zip"), "rb") as file:
+        request_fun.return_value = zipfile.ZipFile(io.BytesIO(file.read()))
+    runner = CliRunner()
+    result = runner.invoke(findstops_cli.main, args + ["--json"])
+    assert result.exit_code == 0
+
+    for stop in json.loads(result.output):
+        assert "direction" in stop
+        assert "stop_id" in stop
+        assert "stop_name" in stop
