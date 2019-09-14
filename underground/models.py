@@ -37,7 +37,7 @@ class Trip(pydantic.BaseModel):
     """Model describing a train trip."""
 
     trip_id: str
-    start_time: datetime.time
+    start_time: datetime.time = None
     start_date: int
     route_id: str
 
