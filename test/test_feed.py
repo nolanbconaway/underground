@@ -7,12 +7,13 @@ import pytest
 
 from underground import feed
 
-from . import DATA_DIR
+from . import DATA_DIR, TEST_PROTOBUFS
 
 
-def test_load_protobuf():
+@pytest.mark.parametrize("filename", TEST_PROTOBUFS)
+def test_load_protobuf(filename):
     """Test that protobuf loader works."""
-    with open(os.path.join(DATA_DIR, "feed_51_sample.protobuf"), "rb") as file:
+    with open(os.path.join(DATA_DIR, filename), "rb") as file:
         sample_bytes = file.read()
 
     data = feed.load_protobuf(sample_bytes)
@@ -22,12 +23,13 @@ def test_load_protobuf():
 
 @mock.patch("underground.feed.request")
 @mock.patch("underground.feed.load_protobuf")
-def test_robust_retry_logic(feed_load_protobuf, feed_request):
+@pytest.mark.parametrize("filename", TEST_PROTOBUFS)
+def test_robust_retry_logic(feed_load_protobuf, feed_request, filename):
     """Test the request_robust retry logic."""
     # set up mocks
     feed_load_protobuf.side_effect = feed.EmptyFeedError
 
-    with open(os.path.join(DATA_DIR, "feed_51_sample.protobuf"), "rb") as file:
+    with open(os.path.join(DATA_DIR, filename), "rb") as file:
         feed_request.return_value = file.read()
 
     # 1 retry should take at least 1 second
