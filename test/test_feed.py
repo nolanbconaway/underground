@@ -23,13 +23,12 @@ def test_load_protobuf(filename):
 
 @mock.patch("underground.feed.request")
 @mock.patch("underground.feed.load_protobuf")
-@pytest.mark.parametrize("filename", TEST_PROTOBUFS)
-def test_robust_retry_logic(feed_load_protobuf, feed_request, filename):
+def test_robust_retry_logic(feed_load_protobuf, feed_request):
     """Test the request_robust retry logic."""
     # set up mocks
     feed_load_protobuf.side_effect = feed.EmptyFeedError
 
-    with open(os.path.join(DATA_DIR, filename), "rb") as file:
+    with open(os.path.join(DATA_DIR, "feed_51_sample.protobuf"), "rb") as file:
         feed_request.return_value = file.read()
 
     # 1 retry should take at least 1 second
