@@ -14,7 +14,7 @@ from underground.cli import stops as stops_cli
 from underground.feed import load_protobuf
 from underground.models import SubwayFeed
 
-from . import DATA_DIR
+from . import DATA_DIR, TEST_PROTOBUFS
 
 
 @mock.patch("underground.models.SubwayFeed.get")
@@ -68,9 +68,10 @@ def test_stops_timezone(subwayfeed_get):
 
 
 @mock.patch("underground.feed.request")
-def test_feed_bytes(feed_request):
+@pytest.mark.parametrize("filename", TEST_PROTOBUFS)
+def test_feed_bytes(feed_request, filename):
     """Test the bytes output option."""
-    with open(os.path.join(DATA_DIR, "sample_valid.protobuf"), "rb") as file:
+    with open(os.path.join(DATA_DIR, filename), "rb") as file:
         feed_request.return_value = file.read()
 
     runner = CliRunner()
@@ -80,9 +81,10 @@ def test_feed_bytes(feed_request):
 
 
 @mock.patch("underground.feed.request")
-def test_feed_json(feed_request):
+@pytest.mark.parametrize("filename", TEST_PROTOBUFS)
+def test_feed_json(feed_request, filename):
     """Test the json output option."""
-    with open(os.path.join(DATA_DIR, "sample_valid.protobuf"), "rb") as file:
+    with open(os.path.join(DATA_DIR, filename), "rb") as file:
         feed_request.return_value = file.read()
 
     runner = CliRunner()

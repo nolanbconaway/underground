@@ -70,8 +70,8 @@ class StopTimeUpdate(pydantic.BaseModel):
     """
 
     stop_id: str
-    arrival: UnixTimestamp
-    departure: UnixTimestamp
+    arrival: UnixTimestamp = None
+    departure: UnixTimestamp = None
 
 
 class TripUpdate(pydantic.BaseModel):
@@ -96,7 +96,7 @@ class Vehicle(pydantic.BaseModel):
     trip: Trip
     timestamp: datetime.datetime = None
     current_stop_sequence: int = None
-    stop_id: str
+    stop_id: str = None
 
 
 class Entity(pydantic.BaseModel):
@@ -171,10 +171,13 @@ class SubwayFeed(pydantic.BaseModel):
             (
                 trip.trip.route_id,
                 stop.stop_id,
-                stop.departure.time.astimezone(pytz.timezone(timezone)),
+                (stop.departure or stop.arrival).time.astimezone(
+                    pytz.timezone(timezone)
+                ),
             )
             for trip in trip_updates_with_stops
             for stop in trip.stop_time_update
+            if stop.departure is not None or stop.arrival is not None
         )
 
         # group into a dict like {route: stop: [t1, t2]}

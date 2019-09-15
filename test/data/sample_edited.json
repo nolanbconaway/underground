@@ -39,9 +39,6 @@
                         "arrival": {
                             "time": 60
                         },
-                        "departure": {
-                            "time": 60
-                        },
                         "stop_id": "702N"
                     }
                 ]
