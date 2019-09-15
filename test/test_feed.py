@@ -12,7 +12,7 @@ from . import DATA_DIR
 
 def test_load_protobuf():
     """Test that protobuf loader works."""
-    with open(os.path.join(DATA_DIR, "sample_valid.protobuf"), "rb") as file:
+    with open(os.path.join(DATA_DIR, "feed_51_sample.protobuf"), "rb") as file:
         sample_bytes = file.read()
 
     data = feed.load_protobuf(sample_bytes)
@@ -27,7 +27,7 @@ def test_robust_retry_logic(feed_load_protobuf, feed_request):
     # set up mocks
     feed_load_protobuf.side_effect = feed.EmptyFeedError
 
-    with open(os.path.join(DATA_DIR, "sample_valid.protobuf"), "rb") as file:
+    with open(os.path.join(DATA_DIR, "feed_51_sample.protobuf"), "rb") as file:
         feed_request.return_value = file.read()
 
     # 1 retry should take at least 1 second

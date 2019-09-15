@@ -70,7 +70,7 @@ def test_stops_timezone(subwayfeed_get):
 @mock.patch("underground.feed.request")
 def test_feed_bytes(feed_request):
     """Test the bytes output option."""
-    with open(os.path.join(DATA_DIR, "sample_valid.protobuf"), "rb") as file:
+    with open(os.path.join(DATA_DIR, "feed_51_sample.protobuf"), "rb") as file:
         feed_request.return_value = file.read()
 
     runner = CliRunner()
@@ -82,7 +82,7 @@ def test_feed_bytes(feed_request):
 @mock.patch("underground.feed.request")
 def test_feed_json(feed_request):
     """Test the json output option."""
-    with open(os.path.join(DATA_DIR, "sample_valid.protobuf"), "rb") as file:
+    with open(os.path.join(DATA_DIR, "feed_51_sample.protobuf"), "rb") as file:
         feed_request.return_value = file.read()
 
     runner = CliRunner()
