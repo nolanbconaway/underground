@@ -54,7 +54,8 @@ class Trip(pydantic.BaseModel):
         """Start_date is an int, so check it conforms to date expectations."""
         if route_id not in metadata.VALID_ROUTES:
             raise ValueError(
-                "Invalid route. Must be one of %s." % str(metadata.VALID_ROUTES)
+                "Invalid route (%s). Must be one of %s."
+                % (route_id, str(metadata.VALID_ROUTES))
             )
 
         return route_id
