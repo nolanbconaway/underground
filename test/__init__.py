@@ -11,7 +11,7 @@ TEST_PROTOBUFS = [
     "feed_16_weekend.protobuf",
     "feed_2_weekday.protobuf",
     "feed_2_weekend.protobuf",
-    # "feed_21_weekday.protobuf",  # need to make this file
+    "feed_21_weekday.protobuf",
     "feed_21_weekend.protobuf",
     "feed_26_weekday.protobuf",
     "feed_26_weekend.protobuf",
