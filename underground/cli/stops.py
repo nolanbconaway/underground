@@ -42,7 +42,7 @@ def main(route, fmt, retries, api_key, timezone):
     # get feed data
     stops = (
         SubwayFeed.get(
-            api_key=api_key, feed_id=metadata.ROUTE_FEED_MAP.get(route), retries=retries
+            api_key=api_key, feed_id=metadata.get_feed_id(route), retries=retries
         )
         .extract_stop_dict(timezone=timezone)
         .get(route, dict())

@@ -35,21 +35,6 @@ def test_extract_stop_dict():
     assert len(stops["7"]["702N"]) == 2
 
 
-def test_on_actual_json():
-    """Test the pydantic class works on a sample file.
-
-    I got the file right from the MTA so this should be a realistic example.
-    """
-    with open(os.path.join(DATA_DIR, "sample_valid.json"), "r") as file:
-        sample_data = json.load(file)
-
-    feed = SubwayFeed(**sample_data)
-
-    # I'm OK so long as there is no exception TBH.
-    assert feed.entity is not None
-    assert isinstance(feed.extract_stop_dict(), dict)
-
-
 @pytest.mark.parametrize("filename", TEST_PROTOBUFS)
 def test_on_sample_protobufs(filename):
     """Make sure the model can load up one sample from all the feeds."""
@@ -71,3 +56,19 @@ def test_get(feed_request, filename):
     feed = SubwayFeed.get(16)
     assert isinstance(feed, SubwayFeed)
     assert isinstance(feed.extract_stop_dict(), dict)
+
+
+def test_trip_route_remap():
+    """Test that the remapping works for a known route."""
+    trip = models.Trip(
+        trip_id="FAKE", start_time="01:00:00", start_date=20190101, route_id="5X"
+    )
+    assert trip.route_id_mapped == "5"
+
+
+def test_extract_dict_route_remap():
+    """Test that the route remap is active for dict extraction."""
+    with open(os.path.join(DATA_DIR, "sample_edited.json"), "r") as file:
+        sample_data = json.load(file)
+    stops = SubwayFeed(**sample_data).extract_stop_dict()
+    assert len(stops["5"]["702N"]) == 1

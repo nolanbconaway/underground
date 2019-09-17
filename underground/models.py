@@ -54,10 +54,16 @@ class Trip(pydantic.BaseModel):
         """Start_date is an int, so check it conforms to date expectations."""
         if route_id not in metadata.VALID_ROUTES:
             raise ValueError(
-                "Invalid route. Must be one of %s." % str(metadata.VALID_ROUTES)
+                "Invalid route (%s). Must be one of %s."
+                % (route_id, str(metadata.VALID_ROUTES))
             )
 
         return route_id
+
+    @property
+    def route_id_mapped(self):
+        """Run some transformations on self."""
+        return metadata.ROUTE_REMAP[self.route_id]
 
 
 class StopTimeUpdate(pydantic.BaseModel):
@@ -169,7 +175,7 @@ class SubwayFeed(pydantic.BaseModel):
         # create (route, stop, time) tuples from each trip
         stops_flat = (
             (
-                trip.trip.route_id,
+                trip.trip.route_id_mapped,
                 stop.stop_id,
                 (stop.departure or stop.arrival).time.astimezone(
                     pytz.timezone(timezone)
