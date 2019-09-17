@@ -25,10 +25,22 @@ ROUTE_FEED_MAP = {
     "Q": 16,
     "R": 16,
     "SI": 11,
+    "SS": 51,  # There is no documentation on this route but it has appeared here.
     "W": 16,
     "Z": 36,
 }
 
+# There are some routes with aliases that we need to map onto the original ID to
+# find the feed ID.
+ROUTE_REMAP = {"5X": "5", "6X": "6", "7X": "7"}
+for k in ROUTE_FEED_MAP:
+    ROUTE_REMAP[k] = k
 
-VALID_ROUTES = set(ROUTE_FEED_MAP.keys())
+
+def get_feed_id(route_id: str) -> int:
+    """Return the feed ID for a given route."""
+    return ROUTE_FEED_MAP[ROUTE_REMAP[route_id]]
+
+
+VALID_ROUTES = set(ROUTE_REMAP.keys())
 VALID_FEED_IDS = set(ROUTE_FEED_MAP.values())

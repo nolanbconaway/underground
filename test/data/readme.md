@@ -3,7 +3,6 @@
 This directory contains test data files. The contents are:
 
 * `sample_edited.json` : Some JSON which should be valid. It is dummy data that I edited, so it only contains a subset of the usual data. But I _do_ know what is in there so it can be used to test results explicitly.
-* `sample_valid.json` : I queried the MTA api and saved a payload of JSON. I don't know whats in here but its an example of valid "real-world" data. This is _not_ the same as the protobuf data.
 * `google_transit.zip` : A ZIP file containing metadata, downloaded on Sept 8 2019 from http://web.mta.info/developers/data/nyct/subway/google_transit.zip
-* `feed_*_sample.protobuf` : A direct save of the protobuf response for each feed id. I don't know what's in here but it is a sample of "real" data.
+* `feed_*_*sample*.protobuf` : A direct save of the binary response for each feed id. I don't know what's in here but it is a sample of "real" data. I captured one set on a weekend (Sunday) and another on a weekday (Monday) to try and capture some of the possible variance in the data.
 

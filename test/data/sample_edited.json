@@ -43,6 +43,24 @@
                     }
                 ]
             }
+        },
+        {
+            "id": "0000097",
+            "trip_update": {
+                "trip": {
+                    "trip_id": "043600_7..N",
+                    "start_date": "20190726",
+                    "route_id": "5X"
+                },
+                "stop_time_update": [
+                    {
+                        "arrival": {
+                            "time": 0
+                        },
+                        "stop_id": "702N"
+                    }
+                ]
+            }
         }
     ]
 }

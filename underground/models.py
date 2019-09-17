@@ -60,6 +60,11 @@ class Trip(pydantic.BaseModel):
 
         return route_id
 
+    @property
+    def route_id_mapped(self):
+        """Run some transformations on self."""
+        return metadata.ROUTE_REMAP[self.route_id]
+
 
 class StopTimeUpdate(pydantic.BaseModel):
     """Stop times for a trip.
@@ -170,7 +175,7 @@ class SubwayFeed(pydantic.BaseModel):
         # create (route, stop, time) tuples from each trip
         stops_flat = (
             (
-                trip.trip.route_id,
+                trip.trip.route_id_mapped,
                 stop.stop_id,
                 (stop.departure or stop.arrival).time.astimezone(
                     pytz.timezone(timezone)
