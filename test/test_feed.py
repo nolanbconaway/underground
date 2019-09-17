@@ -31,6 +31,12 @@ def test_robust_retry_logic(feed_load_protobuf, feed_request):
     with open(os.path.join(DATA_DIR, TEST_PROTOBUFS[0]), "rb") as file:
         feed_request.return_value = file.read()
 
+    # 0 retries should take under a second
+    time_1 = time.time()
+    with pytest.raises(feed.EmptyFeedError):
+        feed.request_robust(feed_id=16, retries=0, api_key="FAKE")
+    assert time.time() - time_1 < 1
+
     # 1 retry should take at least 1 second
     time_1 = time.time()
     with pytest.raises(feed.EmptyFeedError):

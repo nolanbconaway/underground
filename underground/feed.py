@@ -117,20 +117,19 @@ def request_robust(
     """
     # get protobuf bytes
     protobuf_data = request(feed_id=feed_id, api_key=api_key)
+    for attempt in range(retries + 1):
+        try:
+            feed_dict = load_protobuf(protobuf_data)
+            break  # break if success
 
-    # possibly re-request if the data are incomplete.
-    try:
-        feed_dict = load_protobuf(protobuf_data)
+        except (EmptyFeedError, google.protobuf.message.DecodeError):
 
-    except (EmptyFeedError, google.protobuf.message.DecodeError):
+            # raise if we're out of retries
+            if attempt == retries:
+                raise
 
-        # raise if we're out of retries
-        if retries == 0:
-            raise
+            # wait 1 second and then make new protobuf data
+            time.sleep(1)  # be cool to the MTA
+            protobuf_data = request(feed_id=feed_id, api_key=api_key)
 
-        # or retry
-        time.sleep(1)  # be cool to the MTA
-        return request_robust(feed_id=feed_id, retries=retries - 1, api_key=api_key)
-
-    else:
-        return feed_dict if return_dict else protobuf_data
+    return feed_dict if return_dict else protobuf_data
