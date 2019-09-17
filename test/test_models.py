@@ -67,7 +67,7 @@ def test_trip_route_remap():
 
 
 def test_extract_dict_route_remap():
-    """test that the route remap is active for dict extraction."""
+    """Test that the route remap is active for dict extraction."""
     with open(os.path.join(DATA_DIR, "sample_edited.json"), "r") as file:
         sample_data = json.load(file)
     stops = SubwayFeed(**sample_data).extract_stop_dict()
