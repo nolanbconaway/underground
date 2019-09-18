@@ -29,7 +29,7 @@ API_KEY = os.getenv('MTA_API_KEY')
 ROUTE = 'Q'
 
 # get feed id for the Q train route
-FEED_ID = metadata.ROUTE_FEED_MAP[ROUTE]
+FEED_ID = metadata.get_feed_id(ROUTE)
 
 # request and serialize the feed data.
 feed = SubwayFeed.get(FEED_ID, api_key=API_KEY)
