@@ -4,7 +4,7 @@ build-backend = "poetry.masonry.api"
 
 [tool.poetry]
 name = "underground"
-version = "0.2.5"
+version = "0.2.6"
 description = ""
 authors = ["Nolan Conaway <nolanbconaway@gmail.com>"]
 packages = [{ include = "underground" }]
