@@ -44,20 +44,20 @@ q_train_stops = feed.extract_stop_dict()[ROUTE]
 
 `feed.extract_stop_dict` will return a dictionary of dictionaries, like:
 
-``` 
-{
-  "route_1": {
-    "stop_1": [datetime.datetime(...), datetime.datetime(...)],
-    "stop_2": [datetime.datetime(...), datetime.datetime(...)],
-    ...
-  },
-  "route_2": {
-    "stop_1": [datetime.datetime(...), datetime.datetime(...)],
-    "stop_2": [datetime.datetime(...), datetime.datetime(...)],
-    ...
-  }
-}
-```
+    {
+
+      "route_1": {
+        "stop_1": [datetime.datetime(...), datetime.datetime(...)], 
+        "stop_2": [datetime.datetime(...), datetime.datetime(...)], 
+        ...
+      }, 
+      "route_2": {
+        "stop_1": [datetime.datetime(...), datetime.datetime(...)], 
+        "stop_2": [datetime.datetime(...), datetime.datetime(...)], 
+        ...
+      }
+
+    }
 
 > Note: future functionality to be written around the `SubwayFeed` class.
 
@@ -65,65 +65,60 @@ q_train_stops = feed.extract_stop_dict()[ROUTE]
 
 The `underground` command line tool is also installed with the package.
 
-``` 
-$ underground --help
-Usage: underground [OPTIONS] COMMAND [ARGS]...
+    $ underground --help
+    Usage: underground [OPTIONS] COMMAND [ARGS]...
 
-  Command line handlers for MTA realtime data.
+      Command line handlers for MTA realtime data.
 
-Options:
-  --help  Show this message and exit.
+    Options:
 
-  feed       Request an MTA feed.
-  findstops  Find your stop ID.
-  stops      Print out train departure times for all stops on a subway line.
-```
+      --help  Show this message and exit.
+
+      feed       Request an MTA feed.
+      findstops  Find your stop ID.
+      stops      Print out train departure times for all stops on a subway line.
 
 ### `feed` 
 
-``` 
-$ underground feed --help
-Usage: underground feed [OPTIONS] [1|2|36|11|16|51|21|26|31]
+    $ underground feed --help
+    Usage: underground feed [OPTIONS] [1|2|36|11|16|51|21|26|31]
 
-  Request an MTA feed.
+      Request an MTA feed.
 
-Options:
-  --api-key TEXT         MTA API key. Will be read from $MTA_API_KEY if not
-                         provided.
-  --json                 Option to output the feed data as JSON. Otherwise
-                         output will be bytes.
-  -r, --retries INTEGER  Retry attempts in case of API connection failure.
-                         Default 100.
-  --help                 Show this message and exit.
-```
+    Options:
+
+      --api-key TEXT         MTA API key. Will be read from $MTA_API_KEY if not
+                             provided.
+      --json                 Option to output the feed data as JSON. Otherwise
+                             output will be bytes.
+      -r, --retries INTEGER  Retry attempts in case of API connection failure.
+                             Default 100.
+      --help                 Show this message and exit.
 
 Use it like
 
-``` 
-$ export MTA_API_KEY='...'
-$ underground feed 16 --json > feed_16.json
-```
+    $ export MTA_API_KEY='...'
+    $ underground feed 16 --json > feed_16.json
 
 ### `stops` 
 
-``` 
-$ underground stops --help
-Usage: underground stops [OPTIONS] [H|M|D|1|Z|A|N|GS|SI|J|G|Q|L|B|R|F|E|2|7|W|
-                         6|4|C|5|FS]
-    
-  Print out train departure times for all stops on a subway line.
+    $ underground stops --help
+    Usage: underground stops [OPTIONS] [H|M|D|1|Z|A|N|GS|SI|J|G|Q|L|B|R|F|E|2|7|W|
+                             6|4|C|5|FS]
+        
+      Print out train departure times for all stops on a subway line.
 
-Options:
-  -f, --format TEXT      strftime format for stop times. Use `epoch` for a
-                         unix timestamp.
-  -r, --retries INTEGER  Retry attempts in case of API connection failure.
-                         Default 100.
-  --api-key TEXT         MTA API key. Will be read from $MTA_API_KEY if not
-                         provided.
-  -t, --timezone TEXT    Output timezone. Ignored if --epoch. Default to NYC
-                         time.
-  --help                 Show this message and exit.
-```
+    Options:
+
+      -f, --format TEXT      strftime format for stop times. Use `epoch` for a
+                             unix timestamp.
+      -r, --retries INTEGER  Retry attempts in case of API connection failure.
+                             Default 100.
+      --api-key TEXT         MTA API key. Will be read from $MTA_API_KEY if not
+                             provided.
+      -t, --timezone TEXT    Output timezone. Ignored if --epoch. Default to NYC
+                             time.
+      --help                 Show this message and exit.
 
 Stops are printed to stdout in the format `stop_id t1 t2 ... tn` .
 
@@ -145,29 +140,26 @@ If you don't know your stop, see below for a handy tool!
 
 ### `findstops` 
 
-``` 
-$ underground findstops --help
-Usage: underground findstops [OPTIONS] QUERY...
+    $ underground findstops --help
+    Usage: underground findstops [OPTIONS] QUERY...
 
-  Find your stop ID.
+      Find your stop ID.
 
-  Query a location and look for your stop ID, like:
+      Query a location and look for your stop ID, like:
 
-  $ underground findstops parkside av
+      $ underground findstops parkside av
 
-Options:
-  --json  Option to output the data as JSON. Otherwise will be human readable
-          table.
-  --help  Show this message and exit.
-```
+    Options:
+
+      --json  Option to output the data as JSON. Otherwise will be human readable
+              table.
+      --help  Show this message and exit.
 
 Enter the name of your stop and a table of stops with matching names will be returned.
 
-``` 
-$ underground findstops parkside
-ID: D27N    Direction: NORTH    Lat/Lon: 40.655292,-73.961495    Name: PARKSIDE AV
-ID: D27S    Direction: SOUTH    Lat/Lon: 40.655292,-73.961495    Name: PARKSIDE AV
-```
+    $ underground findstops parkside
+    ID: D27N    Direction: NORTH    Lat/Lon: 40.655292, -73.961495    Name: PARKSIDE AV
+    ID: D27S    Direction: SOUTH    Lat/Lon: 40.655292, -73.961495    Name: PARKSIDE AV
 
 Some names are ambiguous (try "fulton st"), for these you'll have to dig into the [metadata](http://web.mta.info/developers/data/nyct/subway/google_transit.zip) more carefully.
 
@@ -175,9 +167,9 @@ Some names are ambiguous (try "fulton st"), for these you'll have to dig into th
 
 None of this is particularly important, I am happy with the API at the moment.
 
-* [ ] Better exception printing from click.
-* [ ] Pypi?
-* [ ] Markdown auto format. Check as a part of the build process.
-* [x] Add some tooling to make finding your stop easier.
-* [ ] Add method to SubwayFeed which counts trains per line/direction.
+*   [ ] Better exception printing from click.
+*   [ ] Pypi?
+*   [ ] Markdown auto format. Check as a part of the build process.
+*   [x] Add some tooling to make finding your stop easier.
+*   [ ] Add method to SubwayFeed which counts trains per line/direction.
 
