@@ -20,51 +20,119 @@ from . import DATA_DIR, TEST_PROTOBUFS
 @mock.patch("underground.models.SubwayFeed.get")
 def test_stops_epoch(subwayfeed_get):
     """Test the epoch handler in the stops cli."""
-    with open(os.path.join(DATA_DIR, "sample_edited.json"), "r") as file:
-        subwayfeed_get.return_value = SubwayFeed(**json.load(file))
+    sample_data = {
+        "header": {"gtfs_realtime_version": "1.0", "timestamp": 0},
+        "entity": [
+            {
+                "id": "1",
+                "trip_update": {
+                    "trip": {"trip_id": "X", "start_date": "20190726", "route_id": "1"},
+                    "stop_time_update": [
+                        {"arrival": {"time": 0}, "stop_id": "ONE"},
+                        {"arrival": {"time": 1}, "stop_id": "TWO"},
+                    ],
+                },
+            },
+            {
+                "id": "2",
+                "trip_update": {
+                    "trip": {"trip_id": "X", "start_date": "20190726", "route_id": "1"},
+                    "stop_time_update": [{"arrival": {"time": 3}, "stop_id": "TWO"}],
+                },
+            },
+        ],
+    }
+    subwayfeed_get.return_value = SubwayFeed(**sample_data)
 
     runner = CliRunner()
-    result = runner.invoke(stops_cli.main, ["7", "-f", "epoch"])
+    result = runner.invoke(stops_cli.main, ["1", "-f", "epoch"])
     assert result.exit_code == 0
-    assert "702N 0 60" in result.output
+    assert "ONE 0" in result.output
+    assert "TWO 1 3" in result.output
 
 
 @mock.patch("underground.models.SubwayFeed.get")
 def test_stops_format(subwayfeed_get):
     """Test the format handler in the stops cli."""
-    with open(os.path.join(DATA_DIR, "sample_edited.json"), "r") as file:
-        subwayfeed_get.return_value = SubwayFeed(**json.load(file))
+    sample_data = {
+        "header": {"gtfs_realtime_version": "1.0", "timestamp": 0},
+        "entity": [
+            {
+                "id": "1",
+                "trip_update": {
+                    "trip": {"trip_id": "X", "start_date": "20190726", "route_id": "1"},
+                    "stop_time_update": [
+                        {"arrival": {"time": 0}, "stop_id": "ONE"},
+                        {"arrival": {"time": 1}, "stop_id": "TWO"},
+                    ],
+                },
+            },
+            {
+                "id": "2",
+                "trip_update": {
+                    "trip": {"trip_id": "X", "start_date": "20190726", "route_id": "1"},
+                    "stop_time_update": [{"arrival": {"time": 3}, "stop_id": "TWO"}],
+                },
+            },
+        ],
+    }
 
+    subwayfeed_get.return_value = SubwayFeed(**sample_data)
     runner = CliRunner()
 
     # year
-    result = runner.invoke(stops_cli.main, ["7", "-f", "%Y", "-t", "UTC"])
+    result = runner.invoke(stops_cli.main, ["1", "-f", "%Y", "-t", "UTC"])
     assert result.exit_code == 0
-    assert "702N 1970 1970" in result.output
+    assert "ONE 1970" in result.output
+    assert "TWO 1970 1970" in result.output
 
     # hour
-    result = runner.invoke(stops_cli.main, ["7", "-f", "%H", "-t", "UTC"])
+    result = runner.invoke(stops_cli.main, ["1", "-f", "%H", "-t", "UTC"])
     assert result.exit_code == 0
-    assert "702N 00 00" in result.output
+    assert "ONE 00" in result.output
+    assert "TWO 00 00" in result.output
 
 
 @mock.patch("underground.models.SubwayFeed.get")
 def test_stops_timezone(subwayfeed_get):
     """Test the timezone handler in the stops cli."""
-    with open(os.path.join(DATA_DIR, "sample_edited.json"), "r") as file:
-        subwayfeed_get.return_value = SubwayFeed(**json.load(file))
+    sample_data = {
+        "header": {"gtfs_realtime_version": "1.0", "timestamp": 0},
+        "entity": [
+            {
+                "id": "1",
+                "trip_update": {
+                    "trip": {"trip_id": "X", "start_date": "20190726", "route_id": "1"},
+                    "stop_time_update": [
+                        {"arrival": {"time": 1}, "stop_id": "ONE"},
+                        {"arrival": {"time": 1}, "stop_id": "TWO"},
+                    ],
+                },
+            },
+            {
+                "id": "2",
+                "trip_update": {
+                    "trip": {"trip_id": "X", "start_date": "20190726", "route_id": "1"},
+                    "stop_time_update": [{"arrival": {"time": 3}, "stop_id": "TWO"}],
+                },
+            },
+        ],
+    }
 
+    subwayfeed_get.return_value = SubwayFeed(**sample_data)
     runner = CliRunner()
 
     # in hong kong time
-    result = runner.invoke(stops_cli.main, ["7", "-f", "%Y", "-t", "Asia/Hong_Kong"])
+    result = runner.invoke(stops_cli.main, ["1", "-f", "%Y", "-t", "Asia/Hong_Kong"])
     assert result.exit_code == 0
-    assert "702N 1970 1970" in result.output
+    assert "ONE 1970" in result.output
+    assert "TWO 1970 1970" in result.output
 
     # in nyc time
-    result = runner.invoke(stops_cli.main, ["7", "-f", "%Y"])
+    result = runner.invoke(stops_cli.main, ["1", "-f", "%Y"])
     assert result.exit_code == 0
-    assert "702N 1969 1969" in result.output
+    assert "TWO 1969 1969" in result.output
+    assert "ONE 1969" in result.output
 
 
 @mock.patch("underground.feed.request")
