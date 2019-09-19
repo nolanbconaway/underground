@@ -25,14 +25,32 @@ def test_unix_timestamp():
 
 
 def test_extract_stop_dict():
-    """Test that the correct train times are extracted.
-    
-    Going to use a dummy JSON file that I have edited.
-    """
-    with open(os.path.join(DATA_DIR, "sample_edited.json"), "r") as file:
-        sample_data = json.load(file)
+    """Test that the correct train times are extracted."""
+    sample_data = {
+        "header": {"gtfs_realtime_version": "1.0", "timestamp": 0},
+        "entity": [
+            {
+                "id": "1",
+                "trip_update": {
+                    "trip": {"trip_id": "X", "start_date": "20190726", "route_id": "1"},
+                    "stop_time_update": [
+                        {"arrival": {"time": 0}, "stop_id": "ONE"},
+                        {"arrival": {"time": 1}, "stop_id": "TWO"},
+                    ],
+                },
+            },
+            {
+                "id": "2",
+                "trip_update": {
+                    "trip": {"trip_id": "X", "start_date": "20190726", "route_id": "1"},
+                    "stop_time_update": [{"arrival": {"time": 3}, "stop_id": "TWO"}],
+                },
+            },
+        ],
+    }
     stops = SubwayFeed(**sample_data).extract_stop_dict()
-    assert len(stops["7"]["702N"]) == 2
+    assert len(stops["1"]["ONE"]) == 1
+    assert len(stops["1"]["TWO"]) == 2
 
 
 @pytest.mark.parametrize("filename", TEST_PROTOBUFS)
@@ -68,7 +86,44 @@ def test_trip_route_remap():
 
 def test_extract_dict_route_remap():
     """Test that the route remap is active for dict extraction."""
-    with open(os.path.join(DATA_DIR, "sample_edited.json"), "r") as file:
-        sample_data = json.load(file)
+    sample_data = {
+        "header": {"gtfs_realtime_version": "1.0", "timestamp": 0},
+        "entity": [
+            {
+                "id": "X",
+                "trip_update": {
+                    "trip": {
+                        "trip_id": "X",
+                        "start_date": "20190726",
+                        "route_id": "5X",
+                    },
+                    "stop_time_update": [{"arrival": {"time": 0}, "stop_id": "X"}],
+                },
+            }
+        ],
+    }
     stops = SubwayFeed(**sample_data).extract_stop_dict()
-    assert len(stops["5"]["702N"]) == 1
+    assert len(stops["5"]["X"]) == 1
+
+
+def test_extract_dict_elapsed_ignored():
+    """Test that elapsed stops are ignored for stop extraction."""
+    sample_data = {
+        "header": {"gtfs_realtime_version": "1.0", "timestamp": 1},
+        "entity": [
+            {
+                "id": "X",
+                "trip_update": {
+                    "trip": {"trip_id": "X", "start_date": "20190726", "route_id": "1"},
+                    "stop_time_update": [
+                        {"arrival": {"time": 0}, "stop_id": "IGNORED"},
+                        {"arrival": {"time": 1}, "stop_id": "EXISTS"},
+                    ],
+                },
+            }
+        ],
+    }
+
+    stops = SubwayFeed(**sample_data).extract_stop_dict()
+    assert "IGNORED" not in stops["1"]
+    assert "EXISTS" in stops["1"]
