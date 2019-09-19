@@ -79,6 +79,16 @@ class StopTimeUpdate(pydantic.BaseModel):
     arrival: UnixTimestamp = None
     departure: UnixTimestamp = None
 
+    @property
+    def depart_or_arrive(self) -> UnixTimestamp:
+        """Return the departure or arrival time if either are specified.
+        
+        This OR should usually be called because the MTA is inconsistent about when
+        arrival/departure are specified, but when both are supplied they are usually
+        the same time.
+        """
+        return self.departure or self.arrival
+
 
 class TripUpdate(pydantic.BaseModel):
     """Info on trips that are underway or scheduled to start within 30 mins.
@@ -177,13 +187,12 @@ class SubwayFeed(pydantic.BaseModel):
             (
                 trip.trip.route_id_mapped,
                 stop.stop_id,
-                (stop.departure or stop.arrival).time.astimezone(
-                    pytz.timezone(timezone)
-                ),
+                (stop.depart_or_arrive).time.astimezone(pytz.timezone(timezone)),
             )
             for trip in trip_updates_with_stops
             for stop in trip.stop_time_update
-            if stop.departure is not None or stop.arrival is not None
+            if stop.depart_or_arrive is not None
+            and stop.depart_or_arrive.time >= self.header.timestamp
         )
 
         # group into a dict like {route: stop: [t1, t2]}
