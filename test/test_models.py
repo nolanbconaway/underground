@@ -1,6 +1,5 @@
 """Data model tests."""
 import datetime
-import json
 import os
 from unittest import mock
 
