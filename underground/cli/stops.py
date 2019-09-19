@@ -7,7 +7,9 @@ from underground.models import SubwayFeed
 
 
 @click.command()
-@click.argument("route", nargs=1, type=click.Choice(metadata.VALID_ROUTES))
+@click.argument(
+    "route", nargs=1, type=click.Choice(set(metadata.ROUTE_FEED_MAP.keys()))
+)
 @click.option(
     "-f",
     "--format",

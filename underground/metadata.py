@@ -42,5 +42,4 @@ def get_feed_id(route_id: str) -> int:
     return ROUTE_FEED_MAP[ROUTE_REMAP[route_id]]
 
 
-VALID_ROUTES = set(ROUTE_REMAP.keys())
 VALID_FEED_IDS = set(ROUTE_FEED_MAP.values())
