@@ -4,6 +4,7 @@ import time
 from unittest import mock
 
 import pytest
+import requests
 
 from underground import feed, metadata
 
@@ -66,3 +67,29 @@ def test_request_no_api_key(monkeypatch):
 
     with pytest.raises(ValueError):
         feed.request(next(iter(metadata.VALID_FEED_IDS)))
+
+
+@pytest.mark.parametrize("ret_code", [200, 500])
+def test_request_elaborate_mocks(monkeypatch, ret_code):
+    """Test the full request function with a lot of mocking."""
+    feed_id = next(iter(metadata.VALID_FEED_IDS))
+
+    class Result(object):
+        def __init__(self, ret_code):
+            self.ret_code = ret_code
+
+        def raise_for_status(self):
+            if self.ret_code != 200:
+                raise requests.HTTPError
+
+        @property
+        def content(self):
+            return ":-)"
+
+    monkeypatch.setattr("requests.get", lambda *a, **k: Result(ret_code))
+    monkeypatch.setenv("MTA_API_KEY", "FAKE")
+    if ret_code != 200:
+        with pytest.raises(requests.HTTPError):
+            feed.request(feed_id)
+    else:
+        feed.request(feed_id)
