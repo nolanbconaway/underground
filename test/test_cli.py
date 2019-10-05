@@ -207,3 +207,25 @@ def test_cli_mains(command):
     """Test that the mains return valid help info."""
     output = subprocess.check_output(command)
     assert "help" in output.decode()
+
+
+def test_findstop_request(monkeypatch):
+    """Mock request to test the findstops function."""
+    with open(os.path.join(DATA_DIR, "google_transit.zip"), "rb") as file:
+        zip_data = file.read()
+
+    class Result:
+        """Fake request result."""
+
+        @staticmethod
+        def raise_for_status():
+            """We are not going to raise anything."""
+
+        @property
+        def content(self):
+            """Zipfile content."""
+            return zip_data
+
+    monkeypatch.setattr("requests.get", lambda *a, **k: Result())
+
+    findstops_cli.request_data()
