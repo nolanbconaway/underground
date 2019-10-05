@@ -39,3 +39,16 @@ def test_robust_retry_logic(feed_load_protobuf, feed_request, retries):
 
     assert elapsed >= retries
     assert elapsed < (retries + 1)
+
+
+@mock.patch("protobuf_to_dict.protobuf_to_dict")
+@pytest.mark.parametrize("dict_data", [dict(), dict(a=1)])
+def test_emptyfeederror(protobuf_to_dict, dict_data):
+    """Test that empty feed is raised."""
+    protobuf_to_dict.return_value = dict_data
+
+    with open(os.path.join(DATA_DIR, TEST_PROTOBUFS[0]), "rb") as file:
+        protobuf_data = file.read()
+
+    with pytest.raises(feed.EmptyFeedError):
+        feed.load_protobuf(protobuf_data)

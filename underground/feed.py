@@ -5,9 +5,9 @@ import time
 import typing
 
 import google
+import protobuf_to_dict
 import requests
 from google.transit import gtfs_realtime_pb2
-from protobuf_to_dict import protobuf_to_dict
 
 from underground import metadata
 
@@ -31,8 +31,7 @@ def load_protobuf(protobuf_bytes: bytes) -> dict:
     """
     feed = gtfs_realtime_pb2.FeedMessage()
     feed.ParseFromString(protobuf_bytes)
-    feed_dict = protobuf_to_dict(feed)
-
+    feed_dict = protobuf_to_dict.protobuf_to_dict(feed)
     if not feed_dict or "entity" not in feed_dict:
         raise EmptyFeedError
 
