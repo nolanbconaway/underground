@@ -177,7 +177,7 @@ Some names are ambiguous (try "fulton st"), for these you'll have to dig into th
 None of this is particularly important, I am happy with the API at the moment.
 
 *   [ ] Better exception printing from click.
-*   [ ] Pypi?
+*   [x] Pypi?
 *   [ ] Markdown auto format. Check as a part of the build process.
 *   [x] Add some tooling to make finding your stop easier.
 *   [ ] Add method to SubwayFeed which counts trains per line/direction.
