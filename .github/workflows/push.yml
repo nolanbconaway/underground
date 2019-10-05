@@ -3,7 +3,7 @@ name: Main Workflow
 on: push
 
 jobs:
-  build:
+  lint_and_test:
     name: Lint and Test
 
     runs-on: ubuntu-latest
@@ -43,5 +43,5 @@ jobs:
         uses: codecov/codecov-action@v1.0.2
         with:
           token: ${{secrets.CODECOV_TOKEN}}
-          name: Python ${{matrix.python-version}} Coverage
+          name: ${{matrix.python-version}}
           file: ./coverage.xml
