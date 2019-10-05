@@ -74,16 +74,21 @@ def test_request_elaborate_mocks(monkeypatch, ret_code):
     """Test the full request function with a lot of mocking."""
     feed_id = next(iter(metadata.VALID_FEED_IDS))
 
-    class Result(object):
+    class Result:
+        """Fake request result."""
+
         def __init__(self, ret_code):
+            """Init the object."""
             self.ret_code = ret_code
 
         def raise_for_status(self):
+            """Raise if return value is not 200."""
             if self.ret_code != 200:
                 raise requests.HTTPError
 
         @property
         def content(self):
+            """Arbitrary content."""
             return ":-)"
 
     monkeypatch.setattr("requests.get", lambda *a, **k: Result(ret_code))
