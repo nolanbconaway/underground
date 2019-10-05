@@ -39,8 +39,7 @@ jobs:
       - name: Pytest
         run: poetry run pytest . --cov=./ --cov-report=xml -v
 
-      - name: Upload coverage to Codecov if Python 3.7
+      - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v1.0.2
-        if: matrix.python-version == 3.7
         with:
           token: ${{secrets.CODECOV_TOKEN}}
