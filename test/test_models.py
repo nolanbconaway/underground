@@ -6,7 +6,7 @@ from unittest import mock
 import pytest
 import pytz
 
-from underground import SubwayFeed, metadata, models
+from underground import SubwayFeed, models
 from underground.dateutils import DEFAULT_TIMEZONE
 from underground.feed import load_protobuf
 
