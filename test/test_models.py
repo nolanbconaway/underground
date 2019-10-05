@@ -6,7 +6,7 @@ from unittest import mock
 import pytest
 import pytz
 
-from underground import SubwayFeed, models
+from underground import SubwayFeed, metadata, models
 from underground.dateutils import DEFAULT_TIMEZONE
 from underground.feed import load_protobuf
 
@@ -21,6 +21,27 @@ def test_unix_timestamp():
     assert unix_ts.timestamp_nyc == epoch_time.astimezone(
         pytz.timezone(DEFAULT_TIMEZONE)
     )
+
+
+def test_header_nyc_time():
+    """Test the nyc time transform for feed header."""
+    header = models.FeedHeader(gtfs_realtime_version="1", timestamp=0)
+    assert header.timestamp_nyc.minute == 0
+
+
+def test_trip_invalid_date():
+    """Test valuerror for invalid dates."""
+    feed_id = next(iter(metadata.VALID_FEED_IDS))
+    with pytest.raises(ValueError):
+        models.Trip(trip_id="1", start_time="00:00", start_date=0, feed_id=feed_id)
+
+
+def test_trip_invalid_feed():
+    """Test valuerror for invalid feeds."""
+    with pytest.raises(ValueError):
+        models.Trip(
+            trip_id="1", start_time="00:00", start_date=20190101, feed_id="FAKE"
+        )
 
 
 def test_extract_stop_dict():
