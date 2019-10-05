@@ -6,7 +6,7 @@ from unittest import mock
 import pytest
 import pytz
 
-from underground import SubwayFeed, metadata, models
+from underground import SubwayFeed, models
 from underground.dateutils import DEFAULT_TIMEZONE
 from underground.feed import load_protobuf
 
@@ -31,17 +31,14 @@ def test_header_nyc_time():
 
 def test_trip_invalid_date():
     """Test valuerror for invalid dates."""
-    feed_id = next(iter(metadata.VALID_FEED_IDS))
     with pytest.raises(ValueError):
-        models.Trip(trip_id="1", start_time="00:00", start_date=0, feed_id=feed_id)
+        models.Trip(trip_id="1", start_date=0, route_id="5")
 
 
 def test_trip_invalid_feed():
     """Test valuerror for invalid feeds."""
     with pytest.raises(ValueError):
-        models.Trip(
-            trip_id="1", start_time="00:00", start_date=20190101, feed_id="FAKE"
-        )
+        models.Trip(trip_id="1", start_date=20190101, route_id="FAKE")
 
 
 def test_extract_stop_dict():
