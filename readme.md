@@ -1,6 +1,7 @@
 # Python MTA Utilities
 
 [![GitHub Actions status](https://github.com/nolanbconaway/underground/workflows/Main%20Workflow/badge.svg)](https://github.com/nolanbconaway/underground/actions)
+[![codecov](https://codecov.io/gh/nolanbconaway/underground/branch/master/graph/badge.svg)](https://codecov.io/gh/nolanbconaway/underground)
 
 This is a set of Python utilities that I use to deal with [real-time NYC subway data](https://datamine.mta.info/).
 
@@ -153,6 +154,7 @@ If you don't know your stop, see below for a handy tool!
 
       --json  Option to output the data as JSON. Otherwise will be human readable
               table.
+
       --help  Show this message and exit.
 
 Enter the name of your stop and a table of stops with matching names will be returned.
