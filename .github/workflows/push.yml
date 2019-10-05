@@ -3,8 +3,8 @@ name: Main Workflow
 on: push
 
 jobs:
-  lint_and_test:
-    name: Lint and Test
+  build:
+    name: Lint, Test, Publish
 
     runs-on: ubuntu-latest
     strategy:
@@ -46,8 +46,8 @@ jobs:
           name: ${{matrix.python-version}}
           file: ./coverage.xml
 
-      - name: Build Publish to PyPi
-        if: github.event_name == 'push' && startsWith(github.event.ref, 'refs/tags') && matrix.python-version == 3.7
+      - name: Build and Publish to PyPi
+        if: startsWith(github.event.ref, 'refs/tags') && matrix.python-version == 3.7
         env:
           PYPI_TOKEN: ${{ secrets.PYPI_TOKEN }}
         run: poetry publish --no-interaction --build -vvv -u __token__ -p $PYPI_TOKEN
