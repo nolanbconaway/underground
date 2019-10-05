@@ -4,12 +4,12 @@ build-backend = "poetry.masonry.api"
 
 [tool.poetry]
 name = "underground"
-version = "0.2.7"
+version = "0.2.7.2"
 description = "Utilities for NYC's realtime MTA data feeds."
 license = "MIT"
 readme = "readme.md"
 repository = "https://github.com/nolanbconaway/underground"
-keywords = "NYC, transit, subway, CLI, command-line"
+keywords = ["nyc", "transit", "subway", "command-line"]
 authors = ["Nolan Conaway <nolanbconaway@gmail.com>"]
 packages = [{ include = "underground" }]
 

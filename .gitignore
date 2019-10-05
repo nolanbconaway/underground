@@ -11,3 +11,4 @@ snapshot.png
 .tox
 old/
 *.lock
+dist/
