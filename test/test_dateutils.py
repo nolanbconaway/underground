@@ -50,3 +50,8 @@ def test_datetime_to_timestring():
     """Test that datetime_to_timestring returns string."""
     dttm = dateutils.current_time()
     assert isinstance(dateutils.datetime_to_timestring(dttm), str)
+
+
+def test_epoch_to_timestring():
+    """Quick test of epoch to timestring."""
+    assert isinstance(dateutils.epoch_to_timestring(0), str)

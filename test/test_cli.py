@@ -2,6 +2,7 @@
 import io
 import json
 import os
+import subprocess
 import zipfile
 from unittest import mock
 
@@ -188,3 +189,43 @@ def test_stopstxt_json(request_fun, args):
         assert "direction" in stop
         assert "stop_id" in stop
         assert "stop_name" in stop
+
+
+@pytest.mark.parametrize(
+    "command",
+    [
+        ("python", "-m", "underground.cli", "--help"),
+        ("python", "-m", "underground.cli.feed", "--help"),
+        ("python", "-m", "underground.cli", "feed", "--help"),
+        ("python", "-m", "underground.cli.stops", "--help"),
+        ("python", "-m", "underground.cli", "stops", "--help"),
+        ("python", "-m", "underground.cli.findstops", "--help"),
+        ("python", "-m", "underground.cli", "findstops", "--help"),
+    ],
+)
+def test_cli_mains(command):
+    """Test that the mains return valid help info."""
+    output = subprocess.check_output(command)
+    assert "help" in output.decode()
+
+
+def test_findstop_request(monkeypatch):
+    """Mock request to test the findstops function."""
+    with open(os.path.join(DATA_DIR, "google_transit.zip"), "rb") as file:
+        zip_data = file.read()
+
+    class Result:
+        """Fake request result."""
+
+        @staticmethod
+        def raise_for_status():
+            """We are not going to raise anything."""
+
+        @property
+        def content(self):
+            """Zipfile content."""
+            return zip_data
+
+    monkeypatch.setattr("requests.get", lambda *a, **k: Result())
+
+    findstops_cli.request_data()
