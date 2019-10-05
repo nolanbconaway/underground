@@ -2,6 +2,7 @@
 import io
 import json
 import os
+import subprocess
 import zipfile
 from unittest import mock
 
@@ -188,3 +189,21 @@ def test_stopstxt_json(request_fun, args):
         assert "direction" in stop
         assert "stop_id" in stop
         assert "stop_name" in stop
+
+
+@pytest.mark.parametrize(
+    "command",
+    [
+        ("python", "-m", "underground.cli", "--help"),
+        ("python", "-m", "underground.cli.feed", "--help"),
+        ("python", "-m", "underground.cli", "feed", "--help"),
+        ("python", "-m", "underground.cli.stops", "--help"),
+        ("python", "-m", "underground.cli", "stops", "--help"),
+        ("python", "-m", "underground.cli.findstops", "--help"),
+        ("python", "-m", "underground.cli", "findstops", "--help"),
+    ],
+)
+def test_cli_mains(command):
+    """Test that the mains return valid help info."""
+    output = subprocess.check_output(command)
+    assert "help" in output.decode()
