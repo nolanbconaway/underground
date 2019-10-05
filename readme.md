@@ -2,6 +2,8 @@
 
 [![GitHub Actions status](https://github.com/nolanbconaway/underground/workflows/Main%20Workflow/badge.svg)](https://github.com/nolanbconaway/underground/actions)
 [![codecov](https://codecov.io/gh/nolanbconaway/underground/branch/master/graph/badge.svg)](https://codecov.io/gh/nolanbconaway/underground)
+[![PyPI - Python Version](https://img.shields.io/pypi/pyversions/underground)](https://pypi.org/project/underground/)
+[![PyPI](https://img.shields.io/pypi/v/underground)](https://pypi.org/project/underground/)
 
 This is a set of Python utilities that I use to deal with [real-time NYC subway data](https://datamine.mta.info/).
 
