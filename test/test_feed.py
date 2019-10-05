@@ -5,7 +5,7 @@ from unittest import mock
 
 import pytest
 
-from underground import feed
+from underground import feed, metadata
 
 from . import DATA_DIR, TEST_PROTOBUFS
 
@@ -52,3 +52,17 @@ def test_emptyfeederror(protobuf_to_dict, dict_data):
 
     with pytest.raises(feed.EmptyFeedError):
         feed.load_protobuf(protobuf_data)
+
+
+def test_request_invalid_feed():
+    """Test that request raises value error for an invalid feed."""
+    with pytest.raises(ValueError):
+        feed.request("NOT REAL")
+
+
+def test_request_no_api_key(monkeypatch):
+    """Test that request raises value error when no api key is available."""
+    monkeypatch.delenv("MTA_API_KEY", raising=False)
+
+    with pytest.raises(ValueError):
+        feed.request(next(iter(metadata.VALID_FEED_IDS)))
