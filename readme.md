@@ -2,6 +2,8 @@
 
 [![GitHub Actions status](https://github.com/nolanbconaway/underground/workflows/Main%20Workflow/badge.svg)](https://github.com/nolanbconaway/underground/actions)
 [![codecov](https://codecov.io/gh/nolanbconaway/underground/branch/master/graph/badge.svg)](https://codecov.io/gh/nolanbconaway/underground)
+[![PyPI - Python Version](https://img.shields.io/pypi/pyversions/underground)](https://pypi.org/project/underground/)
+[![PyPI](https://img.shields.io/pypi/v/underground)](https://pypi.org/project/underground/)
 
 This is a set of Python utilities that I use to deal with [real-time NYC subway data](https://datamine.mta.info/).
 
@@ -9,13 +11,18 @@ I usually want to know when trains are going to depart a specific stop along a s
 
 ## Install
 
-Not on pypi just yet, so:
+``` sh
+pip install underground
+```
+
+Or if you'd like to live dangerously:
 
 ``` sh
 pip install git+https://github.com/nolanbconaway/underground.git#egg=underground
 ```
 
-To request data from the MTA, you'll also need a free API key.[Register here](https://datamine.mta.info/user/register).
+To request data from the MTA, you'll also need a free API key.
+[Register here](https://datamine.mta.info/user/register).
 
 ## Python API
 

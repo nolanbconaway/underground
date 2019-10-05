@@ -3,12 +3,12 @@ name: Main Workflow
 on: push
 
 jobs:
-  lint_and_test:
-    name: Lint and Test
+  build:
+    name: Lint, Test, Publish
 
     runs-on: ubuntu-latest
     strategy:
-      max-parallel: 4
+      max-parallel: 2
       matrix:
         python-version: [3.6, 3.7]
 
@@ -45,3 +45,9 @@ jobs:
           token: ${{secrets.CODECOV_TOKEN}}
           name: ${{matrix.python-version}}
           file: ./coverage.xml
+
+      - name: Build and Publish to PyPi
+        if: startsWith(github.event.ref, 'refs/tags') && matrix.python-version == 3.7
+        env:
+          PYPI_TOKEN: ${{ secrets.PYPI_TOKEN }}
+        run: poetry publish --no-interaction --build -vvv -u __token__ -p $PYPI_TOKEN
