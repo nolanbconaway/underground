@@ -9,13 +9,18 @@ I usually want to know when trains are going to depart a specific stop along a s
 
 ## Install
 
-Not on pypi just yet, so:
+``` sh
+pip install underground
+```
+
+Or if you'd like to live dangerously:
 
 ``` sh
 pip install git+https://github.com/nolanbconaway/underground.git#egg=underground
 ```
 
-To request data from the MTA, you'll also need a free API key.[Register here](https://datamine.mta.info/user/register).
+To request data from the MTA, you'll also need a free API key.
+[Register here](https://datamine.mta.info/user/register).
 
 ## Python API
 
