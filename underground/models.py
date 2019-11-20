@@ -51,7 +51,7 @@ class Trip(pydantic.BaseModel):
 
     @pydantic.validator("route_id")
     def check_route(cls, route_id):
-        """Start_date is an int, so check it conforms to date expectations."""
+        """Check for a valid route ID value."""
         if route_id not in metadata.ROUTE_REMAP:
             raise ValueError(
                 "Invalid route (%s). Must be one of %s."
@@ -62,17 +62,33 @@ class Trip(pydantic.BaseModel):
 
     @property
     def route_id_mapped(self):
-        """Run some transformations on self."""
+        """Find the parent route ID.
+        
+        This is helpful for grabbing the, e.g., 5 Train when you might have a 5X.
+        """
         return metadata.ROUTE_REMAP[self.route_id]
+
+    @property
+    def route_is_assigned(self):
+        """Return a flag indicating that there is a route."""
+        return self.route_id != ""
 
 
 class StopTimeUpdate(pydantic.BaseModel):
     """Stop times for a trip.
 
-    This includes all future Stop Times for the trip but StopTimes from the past
+    This includes all future Stop Times for the trip but Stop Times from the past
     are omitted. The first StopTime in the sequence is the stop the train is
     currently approaching, stopped at or about to leave. A stop is dropped from
     the sequence when the train departs the station.
+
+    Transit times are provided at all in-between stops except at those locations where 
+    there are “scheduled holds”. At those locations both arrival and departure times 
+    are given.
+
+    Note that the predicted times are not updated when the train is not moving. Feed 
+    consumers can detect this condition using the timestamp in the VehiclePosition 
+    message.
     """
 
     stop_id: str
@@ -107,7 +123,30 @@ class TripUpdate(pydantic.BaseModel):
 
 
 class Vehicle(pydantic.BaseModel):
-    """Data model for the vehicle feed message."""
+    """Data model for the vehicle feed message.
+    
+    From the MTA docs:
+    
+    A VehiclePosition entity is provided for every trip when it starts moving. Note that 
+    a train can be assigned (see TripUpdate) but has not started to move (e.g. a train 
+    waiting to leave the origin station), therefore, no VehiclePosition is provided.
+
+    The motivation to include VehiclePosition is to provide the timestamp field. This 
+    is the time of the last detected movement of the train. This allows feed consumers 
+    to detect the situation when a train stops moving (aka stalled). The platform 
+    countdown clocks only count down when trains are moving otherwise they persist the 
+    last published arrival time for that train. If one wants to mimic this behavior you 
+    must first determine the absence of movement (stalled train condition) ), then the
+    countdown must be stopped.
+
+    As an example, a countdown could be stopped for a trip when the difference between 
+    the timestamp in the VehiclePosition and the timestamp in the field header is 
+    greater than, 90 seconds.
+    
+    Note: since VehiclePosition information is not provided until the train starts 
+    moving, it is recommended that feed consumers use the origin terminal departure to 
+    determine a train stalled condition. 
+    """
 
     trip: Trip
     timestamp: datetime.datetime = None
@@ -116,7 +155,11 @@ class Vehicle(pydantic.BaseModel):
 
 
 class Entity(pydantic.BaseModel):
-    """Model for an element within feed entity."""
+    """Model for an element within feed entity.
+    
+    As a side note, I have never found a case where there is BOTH a VehiclePosition and
+    a TripUpdate.
+    """
 
     id: str
     vehicle: Vehicle = None
@@ -178,9 +221,10 @@ class SubwayFeed(pydantic.BaseModel):
         entities_with_updates = filter(lambda x: x.trip_update is not None, self.entity)
         trip_updates = map(attrgetter("trip_update"), entities_with_updates)
 
-        # grab the updates with stop times
+        # grab the updates with routes and stop times
         trip_updates_with_stops = filter(
-            lambda x: x.stop_time_update is not None, trip_updates
+            lambda x: x.trip.route_is_assigned and x.stop_time_update is not None,
+            trip_updates,
         )
         # create (route, stop, time) tuples from each trip
         stops_flat = (
