@@ -30,9 +30,11 @@ ROUTE_FEED_MAP = {
     "Z": 36,
 }
 
-# There are some routes with aliases that we need to map onto the original ID to
-# find the feed ID.
-ROUTE_REMAP = {"5X": "5", "6X": "6", "7X": "7", "FX": "F"}
+# There are some routes with aliases that we need to map onto the original ID.
+# The empty string occurs if the trip has not yet been assigned a route. I have found
+# these cases "in the wild" and would rather write code to skip over them than have
+# the application break.
+ROUTE_REMAP = {"5X": "5", "6X": "6", "7X": "7", "FX": "F", "": ""}
 for k in ROUTE_FEED_MAP:
     ROUTE_REMAP[k] = k
 
