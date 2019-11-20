@@ -144,3 +144,14 @@ def test_extract_dict_elapsed_ignored():
     stops = SubwayFeed(**sample_data).extract_stop_dict()
     assert "IGNORED" not in stops["1"]
     assert "EXISTS" in stops["1"]
+
+
+def test_empty_route_id():
+    """Test the route functionality when the route id is a blacnk string.
+    
+    This uses example data i found in the wild.
+    """
+    trip = {"route_id": "", "start_date": "20191120", "trip_id": "060750_..N"}
+    trip = models.Trip(**trip)
+    assert trip.route_id_mapped == ""
+    assert not trip.route_is_assigned
