@@ -7,7 +7,7 @@ from operator import attrgetter
 import pydantic
 import pytz
 
-from underground import dateutils, feed, metadata
+from underground import feed, metadata
 
 
 class UnixTimestamp(pydantic.BaseModel):
@@ -18,7 +18,7 @@ class UnixTimestamp(pydantic.BaseModel):
     @property
     def timestamp_nyc(self):
         """Return the NYC datetime."""
-        return self.time.astimezone(pytz.timezone(dateutils.DEFAULT_TIMEZONE))
+        return self.time.astimezone(pytz.timezone(metadata.DEFAULT_TIMEZONE))
 
 
 class FeedHeader(pydantic.BaseModel):
@@ -30,7 +30,7 @@ class FeedHeader(pydantic.BaseModel):
     @property
     def timestamp_nyc(self):
         """Return the NYC datetime of the header."""
-        return self.timestamp.astimezone(pytz.timezone(dateutils.DEFAULT_TIMEZONE))
+        return self.timestamp.astimezone(pytz.timezone(metadata.DEFAULT_TIMEZONE))
 
 
 class Trip(pydantic.BaseModel):
@@ -176,13 +176,15 @@ class SubwayFeed(pydantic.BaseModel):
     entity: typing.List[Entity]
 
     @staticmethod
-    def get(feed_id: int, retries: int = 100, api_key: str = None) -> "SubwayFeed":
+    def get(route_or_url: str, retries: int = 100, api_key: str = None) -> "SubwayFeed":
         """Request feed data from the MTA.
         
         Parameters
         ----------
-        feed_id : int
-            Integer feed ID, per ``https://datamine.mta.info/list-of-feeds``.
+        route_or_url : str
+            Route ID or feed url (per ``https://api.mta.info/#/subwayRealTimeFeeds``). 
+            If a route, the URL for that route is looked up. All routes served by that 
+            URL will be included in the result.
         retries : int
             Number of retry attempts, with 1 second timeout between attempts.
             Set to -1 for unlimited. Default 100. 
@@ -198,11 +200,14 @@ class SubwayFeed(pydantic.BaseModel):
         """
         return SubwayFeed(
             **feed.request_robust(
-                feed_id=feed_id, retries=retries, api_key=api_key, return_dict=True
+                route_or_url=route_or_url,
+                retries=retries,
+                api_key=api_key,
+                return_dict=True,
             )
         )
 
-    def extract_stop_dict(self, timezone: str = dateutils.DEFAULT_TIMEZONE) -> dict:
+    def extract_stop_dict(self, timezone: str = metadata.DEFAULT_TIMEZONE) -> dict:
         """Get the departure times for all stops in the feed.
 
         Parameters

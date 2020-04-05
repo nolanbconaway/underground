@@ -1,10 +1,10 @@
 """Test the feed submodule."""
 import os
 import time
-from unittest import mock
 
 import pytest
 import requests
+from requests_mock import ANY as requests_mock_any
 
 from underground import feed, metadata
 
@@ -22,31 +22,32 @@ def test_load_protobuf(filename):
     assert "header" in data
 
 
-@mock.patch("underground.feed.request")
-@mock.patch("underground.feed.load_protobuf")
 @pytest.mark.parametrize("retries", [0, 1, 2])
-def test_robust_retry_logic(feed_load_protobuf, feed_request, retries):
+def test_robust_retry_logic(requests_mock, monkeypatch, retries):
     """Test the request_robust retry logic."""
-    # set up mocks
-    feed_load_protobuf.side_effect = feed.EmptyFeedError
-
     with open(os.path.join(DATA_DIR, TEST_PROTOBUFS[0]), "rb") as file:
-        feed_request.return_value = file.read()
+        return_value = file.read()
+
+    def mock_load_protobuf(*a):
+        raise feed.EmptyFeedError
+
+    # set up mocks
+    monkeypatch.setattr("underground.feed.load_protobuf", mock_load_protobuf)
+    requests_mock.get(requests_mock_any, content=return_value)
 
     time_1 = time.time()
     with pytest.raises(feed.EmptyFeedError):
-        feed.request_robust(feed_id=16, retries=retries, api_key="FAKE")
+        feed.request_robust("1", retries=retries, api_key="FAKE")
     elapsed = time.time() - time_1
 
     assert elapsed >= retries
     assert elapsed < (retries + 1)
 
 
-@mock.patch("protobuf_to_dict.protobuf_to_dict")
 @pytest.mark.parametrize("dict_data", [dict(), dict(a=1)])
-def test_emptyfeederror(protobuf_to_dict, dict_data):
+def test_emptyfeederror(monkeypatch, dict_data):
     """Test that empty feed is raised."""
-    protobuf_to_dict.return_value = dict_data
+    monkeypatch.setattr("protobuf_to_dict.protobuf_to_dict", lambda x: dict_data)
 
     with open(os.path.join(DATA_DIR, TEST_PROTOBUFS[0]), "rb") as file:
         protobuf_data = file.read()
@@ -66,35 +67,16 @@ def test_request_no_api_key(monkeypatch):
     monkeypatch.delenv("MTA_API_KEY", raising=False)
 
     with pytest.raises(ValueError):
-        feed.request(next(iter(metadata.VALID_FEED_IDS)))
+        feed.request(next(iter(metadata.VALID_FEED_URLS)))
 
 
 @pytest.mark.parametrize("ret_code", [200, 500])
-def test_request_elaborate_mocks(monkeypatch, ret_code):
-    """Test the full request function with a lot of mocking."""
-    feed_id = next(iter(metadata.VALID_FEED_IDS))
-
-    class Result:
-        """Fake request result."""
-
-        def __init__(self, ret_code):
-            """Init the object."""
-            self.ret_code = ret_code
-
-        def raise_for_status(self):
-            """Raise if return value is not 200."""
-            if self.ret_code != 200:
-                raise requests.HTTPError
-
-        @property
-        def content(self):
-            """Arbitrary content."""
-            return ":-)"
-
-    monkeypatch.setattr("requests.get", lambda *a, **k: Result(ret_code))
-    monkeypatch.setenv("MTA_API_KEY", "FAKE")
+def test_request_raise_status(requests_mock, ret_code):
+    """Test the request raise status conditional."""
+    feed_url = next(iter(metadata.VALID_FEED_URLS))
+    requests_mock.get(requests_mock_any, content="".encode(), status_code=ret_code)
     if ret_code != 200:
         with pytest.raises(requests.HTTPError):
-            feed.request(feed_id)
+            feed.request(feed_url, api_key="FAKE")
     else:
-        feed.request(feed_id)
+        feed.request(feed_url, api_key="FAKE")

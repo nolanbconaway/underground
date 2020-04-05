@@ -38,7 +38,7 @@ def load_protobuf(protobuf_bytes: bytes) -> dict:
     return feed_dict
 
 
-def request(feed_id: int, api_key: str = None) -> bytes:
+def request(route_or_url: str, api_key: str = None) -> bytes:
     """Send a HTTP GET request to the MTA for realtime feed data.
 
     Occassionally a feed is requested as the MTA is writing updated data to the file,
@@ -47,8 +47,8 @@ def request(feed_id: int, api_key: str = None) -> bytes:
     
     Parameters
     ----------
-    feed_id : int
-        Integer feed ID, per ``https://datamine.mta.info/list-of-feeds``.
+    route_or_url : str
+        Route ID or feed url (per ``https://api.mta.info/#/subwayRealTimeFeeds``).
     api_key : str
        MTA API key. If not provided, it will be read from the $MTA_API_KEY env 
        variable.
@@ -60,10 +60,7 @@ def request(feed_id: int, api_key: str = None) -> bytes:
 
     """
     # check feed
-    if feed_id not in metadata.VALID_FEED_IDS:
-        raise ValueError(
-            "Invalid feed ID. Must be in `%s`." % str(metadata.VALID_FEED_IDS)
-        )
+    url = metadata.resolve_url(route_or_url)
 
     # get the API key.
     api_key = api_key or os.getenv("MTA_API_KEY", None)
@@ -74,17 +71,17 @@ def request(feed_id: int, api_key: str = None) -> bytes:
         )
 
     # make the request
-    res = requests.get(
-        "http://datamine.mta.info/mta_esi.php",
-        params=dict(key=api_key, feed_id=feed_id),
-    )
+    res = requests.get(url, headers={"x-api-key": api_key})
     res.raise_for_status()
 
     return res.content
 
 
 def request_robust(
-    feed_id: int, retries: int = 100, api_key: str = None, return_dict: bool = False
+    route_or_url: str,
+    retries: int = 100,
+    api_key: str = None,
+    return_dict: bool = False,
 ) -> typing.Union[dict, bytes]:
     """Request feed data with validations and retries.
 
@@ -95,8 +92,8 @@ def request_robust(
     
     Parameters
     ----------
-    feed_id : int
-        Integer feed ID, per ``https://datamine.mta.info/list-of-feeds``.
+    route_or_url : str
+        Route ID or feed url (per ``https://api.mta.info/#/subwayRealTimeFeeds``).
     retries : int
         Number of retry attempts, with 1 second timeout between attempts.
         Set to -1 for unlimited. Default 100. 
@@ -115,7 +112,7 @@ def request_robust(
 
     """
     # get protobuf bytes
-    protobuf_data = request(feed_id=feed_id, api_key=api_key)
+    protobuf_data = request(route_or_url=route_or_url, api_key=api_key)
     for attempt in range(retries + 1):
         try:
             feed_dict = load_protobuf(protobuf_data)
@@ -129,6 +126,6 @@ def request_robust(
 
             # wait 1 second and then make new protobuf data
             time.sleep(1)  # be cool to the MTA
-            protobuf_data = request(feed_id=feed_id, api_key=api_key)
+            protobuf_data = request(route_or_url=route_or_url, api_key=api_key)
 
     return feed_dict if return_dict else protobuf_data
