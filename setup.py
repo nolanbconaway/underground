@@ -27,7 +27,6 @@ DEV_REQUIRES = [
 ]
 
 # use readme as long description
-print(list(THIS_DIRECTORY.glob("*")))
 LONG_DESCRIPTION = (THIS_DIRECTORY / "readme.md").read_text()
 
 setup(
