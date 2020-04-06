@@ -1,14 +1,14 @@
 """Data model tests."""
 import datetime
 import os
-from unittest import mock
 
 import pytest
 import pytz
+from requests_mock import ANY as requests_mock_any
 
 from underground import SubwayFeed, models
-from underground.dateutils import DEFAULT_TIMEZONE
 from underground.feed import load_protobuf
+from underground.metadata import DEFAULT_TIMEZONE
 
 from . import DATA_DIR, TEST_PROTOBUFS
 
@@ -81,14 +81,15 @@ def test_on_sample_protobufs(filename):
     assert isinstance(feed.extract_stop_dict(), dict)
 
 
-@mock.patch("underground.feed.request")
 @pytest.mark.parametrize("filename", TEST_PROTOBUFS)
-def test_get(feed_request, filename):
+def test_get(requests_mock, filename):
     """Test the get method creates the desired object."""
     with open(os.path.join(DATA_DIR, filename), "rb") as file:
-        feed_request.return_value = file.read()
+        return_value = file.read()
 
-    feed = SubwayFeed.get(16)
+    requests_mock.get(requests_mock_any, content=return_value)
+    feed = SubwayFeed.get("1", api_key="FAKE")  ## valid route but not used at all
+
     assert isinstance(feed, SubwayFeed)
     assert isinstance(feed.extract_stop_dict(), dict)
 

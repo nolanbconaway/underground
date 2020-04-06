@@ -12,3 +12,4 @@ snapshot.png
 old/
 *.lock
 dist/
+.python-version

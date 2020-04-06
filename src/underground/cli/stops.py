@@ -1,15 +1,21 @@
 """Get upcoming stops along a train route."""
 
-import click
+import datetime
 
-from underground import dateutils, metadata
+import click
+import pytz
+
+from underground import metadata
 from underground.models import SubwayFeed
 
 
+def datetime_to_epoch(dttm: datetime.datetime) -> int:
+    """Return a unix timestmap from a datetime."""
+    return int(dttm.astimezone(pytz.timezone("UTC")).timestamp())
+
+
 @click.command()
-@click.argument(
-    "route", nargs=1, type=click.Choice(set(metadata.ROUTE_FEED_MAP.keys()))
-)
+@click.argument("route", nargs=1, type=click.Choice(metadata.VALID_ROUTES))
 @click.option(
     "-f",
     "--format",
@@ -36,23 +42,20 @@ from underground.models import SubwayFeed
     "-t",
     "--timezone",
     "timezone",
-    default=dateutils.DEFAULT_TIMEZONE,
+    default=metadata.DEFAULT_TIMEZONE,
     help="Output timezone. Ignored if --epoch. Default to NYC time.",
 )
 def main(route, fmt, retries, api_key, timezone):
     """Print out train departure times for all stops on a subway line."""
-    # get feed data
     stops = (
-        SubwayFeed.get(
-            api_key=api_key, feed_id=metadata.get_feed_id(route), retries=retries
-        )
+        SubwayFeed.get(api_key=api_key, route_or_url=route, retries=retries)
         .extract_stop_dict(timezone=timezone)
         .get(route, dict())
     )
 
     # figure out how to format it
     if fmt == "epoch":
-        format_fun = dateutils.datetime_to_epoch
+        format_fun = datetime_to_epoch
     else:
         format_fun = lambda x: x.strftime(fmt)
 

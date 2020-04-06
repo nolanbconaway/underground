@@ -1,6 +1,6 @@
 # Python MTA Utilities
 
-[![GitHub Actions status](https://github.com/nolanbconaway/underground/workflows/Main%20Workflow/badge.svg)](https://github.com/nolanbconaway/underground/actions)
+[![badge](https://github.com/nolanbconaway/underground/workflows/Push/badge.svg)](https://github.com/nolanbconaway/underground/actions)
 [![codecov](https://codecov.io/gh/nolanbconaway/underground/branch/master/graph/badge.svg)](https://codecov.io/gh/nolanbconaway/underground)
 [![PyPI - Python Version](https://img.shields.io/pypi/pyversions/underground)](https://pypi.org/project/underground/)
 [![PyPI](https://img.shields.io/pypi/v/underground)](https://pypi.org/project/underground/)
@@ -22,7 +22,33 @@ pip install git+https://github.com/nolanbconaway/underground.git#egg=underground
 ```
 
 To request data from the MTA, you'll also need a free API key.
-[Register here](https://datamine.mta.info/user/register).
+[Register here](https://api.mta.info/).
+
+### Version 0.2.7.4 vs 0.3.0
+
+On May 1 2020, the MTA is sunsetting the [datamine.mta.info](http://datamine.mta.info/) service. The new API ([api.mta.info](https://api.mta.info/)) provides identical data but with a new request API. 
+
+Users of 0.2.x will need to migrate by doing the following:
+
+1. **Get a new API key at [api.mta.info](https://api.mta.info/).** This key is longer than the one provided by the datamine API. Underground understands this key in the same way as the old one.
+2. **Replace all feed IDs with route IDs or URLs.** The feed IDs have changed for the new API, and not all feeds have IDs any more. Version 0.3 of Underground was built with a `route_or_url` concept for feed selection. Users may provide the URL for the feed they want (see [this page](https://api.mta.info/#/subwayRealTimeFeeds)), or they may provide a route ID (in which case the appropriate URL is then selected).
+
+Code from v0.2.x such as this:
+
+```python
+feed = SubwayFeed.get(metadata.get_feed_id('Q'))
+```
+
+Now becomes in v0.3:
+
+```python
+# under the hood, the correct URL is selected.
+feed = SubwayFeed.get('Q')
+
+# or 
+url = 'https://api-endpoint.mta.info/Dataservice/mtagtfsfeeds/nyct%2Fgtfs-nqrw'
+feed = SubwayFeed.get(url)
+```
 
 ## Python API
 
@@ -35,98 +61,114 @@ from underground import metadata, SubwayFeed
 
 API_KEY = os.getenv('MTA_API_KEY')
 ROUTE = 'Q'
+feed = SubwayFeed.get(ROUTE, api_key=API_KEY)
 
-# get feed id for the Q train route
-FEED_ID = metadata.get_feed_id(ROUTE)
+# request will read from $MTA_API_KEY if a key is not provided
+feed = SubwayFeed.get(ROUTE)
 
-# request and serialize the feed data.
-feed = SubwayFeed.get(FEED_ID, api_key=API_KEY)
+# under the hood, the Q route is mapped to a URL. This call is equivalent:
+URL = 'https://api-endpoint.mta.info/Dataservice/mtagtfsfeeds/nyct%2Fgtfs-nqrw'
+feed = SubwayFeed.get(URL)
 
-# request will automatically try to read from $MTA_API_KEY if a key is not provided,
-# so this also works:
-feed = SubwayFeed.get(FEED_ID)
-
-# extract train stops on each line
-q_train_stops = feed.extract_stop_dict()[ROUTE]
+# or
+URL = metadata.resolve_url(ROUTE)
+feed = SubwayFeed.get(URL)
 ```
+
+### List train stops on each line
 
 `feed.extract_stop_dict` will return a dictionary of dictionaries, like:
 
-    {
+```python
+>>> feed.extract_stop_dict()
 
-      "route_1": {
-        "stop_1": [datetime.datetime(...), datetime.datetime(...)], 
-        "stop_2": [datetime.datetime(...), datetime.datetime(...)], 
-        ...
-      }, 
-      "route_2": {
-        "stop_1": [datetime.datetime(...), datetime.datetime(...)], 
-        "stop_2": [datetime.datetime(...), datetime.datetime(...)], 
-        ...
-      }
+{
 
-    }
+  "route_1": {
+    "stop_1": [datetime.datetime(...), datetime.datetime(...)], 
+    "stop_2": [datetime.datetime(...), datetime.datetime(...)], 
+    ...
+  }, 
+  "route_2": {
+    "stop_1": [datetime.datetime(...), datetime.datetime(...)], 
+    "stop_2": [datetime.datetime(...), datetime.datetime(...)], 
+    ...
+  }
 
-> Note: future functionality to be written around the `SubwayFeed` class.
+}
+```
 
 ## CLI
 
 The `underground` command line tool is also installed with the package.
 
-    $ underground --help
-    Usage: underground [OPTIONS] COMMAND [ARGS]...
+```
+$ underground --help
+Usage: underground [OPTIONS] COMMAND [ARGS]...
 
-      Command line handlers for MTA realtime data.
+  Command line handlers for MTA realtime data.
 
-    Options:
+Options:
+  --help  Show this message and exit.
 
-      --help  Show this message and exit.
-
-      feed       Request an MTA feed.
-      findstops  Find your stop ID.
-      stops      Print out train departure times for all stops on a subway line.
+Commands:
+  feed       Request an MTA feed.
+  findstops  Find your stop ID.
+  stops      Print out train departure times for all stops on a subway line.
+  version    Print the underground version.
+```
 
 ### `feed` 
+```
+$ underground feed --help
+Usage: underground feed [OPTIONS] ROUTE_OR_URL
 
-    $ underground feed --help
-    Usage: underground feed [OPTIONS] [1|2|36|11|16|51|21|26|31]
+  Request an MTA feed via a route or URL.
 
-      Request an MTA feed.
+  ROUTE_OR_URL may be either a feed URL or a route (which will be used to
+  look up the feed url).
 
-    Options:
+  Examples (both access the same feed):
 
-      --api-key TEXT         MTA API key. Will be read from $MTA_API_KEY if not
-                             provided.
-      --json                 Option to output the feed data as JSON. Otherwise
-                             output will be bytes.
-      -r, --retries INTEGER  Retry attempts in case of API connection failure.
-                             Default 100.
-      --help                 Show this message and exit.
+      underground feed Q --json > feed_nrqw.json
 
-Use it like
+      URL='https://api-endpoint.mta.info/Dataservice/mtagtfsfeeds/nyct%2Fgtfs-nqrw' &&
+      underground feed $URL --json > feed_nrqw.json
 
-    $ export MTA_API_KEY='...'
-    $ underground feed 16 --json > feed_16.json
+Options:
+  --api-key TEXT         MTA API key. Will be read from $MTA_API_KEY if not
+                         provided.
+
+  --json                 Option to output the feed data as JSON. Otherwise
+                         output will be bytes.
+
+  -r, --retries INTEGER  Retry attempts in case of API connection failure.
+                         Default 100.
+
+  --help                 Show this message and exit.
+```
 
 ### `stops` 
 
-    $ underground stops --help
-    Usage: underground stops [OPTIONS] [H|M|D|1|Z|A|N|GS|SI|J|G|Q|L|B|R|F|E|2|7|W|
-                             6|4|C|5|FS]
-        
-      Print out train departure times for all stops on a subway line.
+```
+$ underground stops --help
+Usage: underground stops [OPTIONS] [H|M|D|1|Z|A|N|GS|SI|J|G|Q|L|B|R|F|E|2|7|W|
+                          6|4|C|5|FS]
+    
+  Print out train departure times for all stops on a subway line.
 
-    Options:
+Options:
 
-      -f, --format TEXT      strftime format for stop times. Use `epoch` for a
-                             unix timestamp.
-      -r, --retries INTEGER  Retry attempts in case of API connection failure.
-                             Default 100.
-      --api-key TEXT         MTA API key. Will be read from $MTA_API_KEY if not
-                             provided.
-      -t, --timezone TEXT    Output timezone. Ignored if --epoch. Default to NYC
-                             time.
-      --help                 Show this message and exit.
+  -f, --format TEXT      strftime format for stop times. Use `epoch` for a
+                          unix timestamp.
+  -r, --retries INTEGER  Retry attempts in case of API connection failure.
+                          Default 100.
+  --api-key TEXT         MTA API key. Will be read from $MTA_API_KEY if not
+                          provided.
+  -t, --timezone TEXT    Output timezone. Ignored if --epoch. Default to NYC
+                          time.
+  --help                 Show this message and exit.
+```
 
 Stops are printed to stdout in the format `stop_id t1 t2 ... tn` .
 
@@ -148,37 +190,30 @@ If you don't know your stop, see below for a handy tool!
 
 ### `findstops` 
 
-    $ underground findstops --help
-    Usage: underground findstops [OPTIONS] QUERY...
+```
+$ underground findstops --help
+Usage: underground findstops [OPTIONS] QUERY...
 
-      Find your stop ID.
+  Find your stop ID.
 
-      Query a location and look for your stop ID, like:
+  Query a location and look for your stop ID, like:
 
-      $ underground findstops parkside av
+  $ underground findstops parkside av
 
-    Options:
+Options:
 
-      --json  Option to output the data as JSON. Otherwise will be human readable
-              table.
+  --json  Option to output the data as JSON. Otherwise will be human readable
+          table.
 
-      --help  Show this message and exit.
+  --help  Show this message and exit.
+```
 
 Enter the name of your stop and a table of stops with matching names will be returned.
 
-    $ underground findstops parkside
-    ID: D27N    Direction: NORTH    Lat/Lon: 40.655292, -73.961495    Name: PARKSIDE AV
-    ID: D27S    Direction: SOUTH    Lat/Lon: 40.655292, -73.961495    Name: PARKSIDE AV
+```
+$ underground findstops parkside
+ID: D27N    Direction: NORTH    Lat/Lon: 40.655292, -73.961495    Name: PARKSIDE AV
+ID: D27S    Direction: SOUTH    Lat/Lon: 40.655292, -73.961495    Name: PARKSIDE AV
+```
 
 Some names are ambiguous (try "fulton st"), for these you'll have to dig into the [metadata](http://web.mta.info/developers/data/nyct/subway/google_transit.zip) more carefully.
-
-## Todo
-
-None of this is particularly important, I am happy with the API at the moment.
-
-*   [ ] Better exception printing from click.
-*   [x] Pypi?
-*   [ ] Markdown auto format. Check as a part of the build process.
-*   [x] Add some tooling to make finding your stop easier.
-*   [ ] Add method to SubwayFeed which counts trains per line/direction.
-
