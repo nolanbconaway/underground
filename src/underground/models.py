@@ -19,7 +19,7 @@ class UnixTimestamp(pydantic.BaseModel):
     def timestamp_nyc(self):
         """Return the NYC datetime."""
         if not self.time:
-            return Non 
+            return None 
         return self.time.astimezone(pytz.timezone(metadata.DEFAULT_TIMEZONE))
 
 
