@@ -23,7 +23,6 @@ class UnixTimestamp(pydantic.BaseModel):
         return self.time.astimezone(pytz.timezone(metadata.DEFAULT_TIMEZONE))
 
 
-
 class FeedHeader(pydantic.BaseModel):
     """Data model for the feed header."""
 
