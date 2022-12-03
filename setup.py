@@ -11,7 +11,7 @@ INSTALL_REQUIRES = [
     "requests>=2.22",
     "google~=2.0",
     "gtfs-realtime-bindings==0.0.6",
-    "protobuf~=3.20.0",
+    "protobuf>=3.19.6,<=3.20.3",
     "protobuf3-to-dict>=0.1.5",
     "click~=7.0",
     "pydantic~=0.31.1",
