@@ -13,11 +13,13 @@ from underground import feed, metadata
 class UnixTimestamp(pydantic.BaseModel):
     """A unix timestamp model."""
 
-    time: datetime.datetime
+    time: datetime.datetime = None
 
     @property
     def timestamp_nyc(self):
         """Return the NYC datetime."""
+        if not self.time:
+            return None 
         return self.time.astimezone(pytz.timezone(metadata.DEFAULT_TIMEZONE))
 
 
@@ -103,7 +105,10 @@ class StopTimeUpdate(pydantic.BaseModel):
         arrival/departure are specified, but when both are supplied they are usually
         the same time.
         """
-        return self.departure or self.arrival
+        if self.departure is not None and self.departure.time is not None:
+            return self.departure
+        elif self.arrival is not None and self.arrival.time is not None:
+            return self.arrival
 
 
 class TripUpdate(pydantic.BaseModel):

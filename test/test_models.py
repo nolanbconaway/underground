@@ -156,3 +156,28 @@ def test_empty_route_id():
     trip = models.Trip(**trip)
     assert trip.route_id_mapped == ""
     assert not trip.route_is_assigned
+
+
+def test_malformed_departure_is_ignored():
+    """Test that a stop_time_update with empty departure data is ignored."""
+    sample_data = {
+        "header": {"gtfs_realtime_version": "1.0", "timestamp": 1},
+        "entity": [
+            {
+                "id": "X",
+                "trip_update": {
+                    "trip": {"trip_id": "X", "start_date": "20190726", "route_id": "1"},
+                    "stop_time_update": [
+                        {"departure": {}, "stop_id": "IGNORED"},
+                        {"departure": {"time": 1}, "stop_id": "STOP1"},
+                        {"departure": {"time": 2}, "stop_id": "STOP2"},
+                    ],
+                },
+            }
+        ],
+    }
+
+    stops = SubwayFeed(**sample_data).extract_stop_dict()
+    assert "IGNORED" not in stops["1"]
+    assert "STOP1" in stops["1"]
+    assert "STOP2" in stops["1"]
