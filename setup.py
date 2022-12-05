@@ -14,7 +14,7 @@ INSTALL_REQUIRES = [
     "protobuf>=3.19.6,<=3.20.3",
     "protobuf3-to-dict>=0.1.5",
     "click~=7.0",
-    "pydantic~=1.10.2",
+    "pydantic~=1.9.2",
     "pytz>=2019.2",
 ]
 
