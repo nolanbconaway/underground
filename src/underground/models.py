@@ -2,7 +2,6 @@
 
 import datetime
 import typing
-from operator import attrgetter
 
 import pydantic
 import pytz
@@ -227,15 +226,24 @@ class SubwayFeed(pydantic.BaseModel):
             The dictionary will be a schema like ``{route: {stop: [t1, t2]}}``.
         
         """
-        # filter down data to trips with an update
-        entities_with_updates = filter(lambda x: x.trip_update is not None, self.entity)
-        trip_updates = map(attrgetter("trip_update"), entities_with_updates)
+
+        trip_updates = (x.trip_update for x in self.entity if x.trip_update is not None)
+        vehicles = {e.vehicle.trip.trip_id: e.vehicle for e in self.entity if e.vehicle is not None}
+
+        def is_trip_active(update: TripUpdate) -> bool:
+            has_route = update.trip.route_is_assigned
+            has_stops = update.stop_time_update is not None
+
+            vehicle = vehicles.get(update.trip.trip_id)
+            if vehicle is None or vehicle.timestamp is None:
+                return has_route and has_stops
+
+            # as recommended by the MTA, we use these timestamps to determine if a train is stalled
+            train_stalled = (self.header.timestamp - vehicle.timestamp) > datetime.timedelta(seconds=90)
+            return has_route and has_stops and not train_stalled
 
         # grab the updates with routes and stop times
-        trip_updates_with_stops = filter(
-            lambda x: x.trip.route_is_assigned and x.stop_time_update is not None,
-            trip_updates,
-        )
+        trip_updates_with_stops = filter(is_trip_active, trip_updates)
         # create (route, stop, time) tuples from each trip
         stops_flat = (
             (
