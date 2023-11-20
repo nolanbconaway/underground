@@ -147,6 +147,91 @@ def test_extract_dict_elapsed_ignored():
     assert "EXISTS" in stops["1"]
 
 
+def test_extract_dict_stalled_train_omitted():
+    """Test that a stalled train is omitted from the stop extraction."""
+    sample_data = {
+        "header": {"gtfs_realtime_version": "1.0", "timestamp": 1699239196},
+        "entity": [
+            {
+                "id": "000021F",
+                "trip_update": {
+                    "trip": {
+                        "trip_id": "128000_F..S",
+                        "start_time": "21:20:00",
+                        "start_date": "20231105",
+                        "route_id": "F",
+                    },
+                    "stop_time_update": [
+                        {
+                            "arrival": {"time": 1699239913},
+                            "departure": {"time": 1699239913},
+                            "stop_id": "D17S",
+                        }
+                    ],
+                },
+            },
+            {
+                "id": "000022F",
+                "vehicle": {
+                    "trip": {
+                        "trip_id": "128000_F..S",
+                        "start_time": "21:20:00",
+                        "start_date": "20231105",
+                        "route_id": "F",
+                    },
+                    "current_stop_sequence": 13,
+                    "current_status": 1,
+                    "timestamp": 1699238728,  # STALLED TRAIN
+                    "stop_id": "G14S",
+                },
+            },
+            {
+                "id": "000025F",
+                "trip_update": {
+                    "trip": {
+                        "trip_id": "129300_F..S",
+                        "start_time": "21:33:00",
+                        "start_date": "20231105",
+                        "route_id": "F",
+                    },
+                    "stop_time_update": [
+                        {
+                            "arrival": {"time": 1699240511},
+                            "departure": {"time": 1699240511},
+                            "stop_id": "D17S",
+                        }
+                    ],
+                },
+            },
+            {
+                "id": "000026F",
+                "vehicle": {
+                    "trip": {
+                        "trip_id": "129300_F..S",
+                        "start_time": "21:33:00",
+                        "start_date": "20231105",
+                        "route_id": "F",
+                    },
+                    "current_stop_sequence": 10,
+                    "current_status": 1,
+                    "timestamp": 1699239183,
+                    "stop_id": "G11S",
+                },
+            },
+        ],
+    }
+    feed = SubwayFeed(**sample_data)
+
+    stops_no_timeout = feed.extract_stop_dict(stalled_timeout=0)
+    assert len(stops_no_timeout["F"]["D17S"]) == 2
+
+    stops_default = feed.extract_stop_dict()  # stalled_timeout=90
+    assert len(stops_default["F"]["D17S"]) == 1
+
+    stops_long_timeout = feed.extract_stop_dict(stalled_timeout=900)
+    assert len(stops_long_timeout["F"]["D17S"]) == 2
+
+
 def test_empty_route_id():
     """Test the route functionality when the route id is a blacnk string.
     
