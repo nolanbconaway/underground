@@ -45,11 +45,20 @@ def datetime_to_epoch(dttm: datetime.datetime) -> int:
     default=metadata.DEFAULT_TIMEZONE,
     help="Output timezone. Ignored if --epoch. Default to NYC time.",
 )
-def main(route, fmt, retries, api_key, timezone):
+@click.option(
+    "-s",
+    "--stalled-timeout",
+    "stalled_timeout",
+    default=90,
+    help="Number of seconds between the last movement of a train and the API"
+    " update before considering a train stalled. Default is 90 as recommended"
+    " by the MTA. Numbers less than 1 disable this check.",
+)
+def main(route, fmt, retries, api_key, timezone, stalled_timeout):
     """Print out train departure times for all stops on a subway line."""
     stops = (
         SubwayFeed.get(api_key=api_key, route_or_url=route, retries=retries)
-        .extract_stop_dict(timezone=timezone)
+        .extract_stop_dict(timezone=timezone, stalled_timeout=stalled_timeout)
         .get(route, dict())
     )
 
