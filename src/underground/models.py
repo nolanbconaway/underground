@@ -211,35 +211,47 @@ class SubwayFeed(pydantic.BaseModel):
             )
         )
 
-    def extract_stop_dict(self, timezone: str = metadata.DEFAULT_TIMEZONE) -> dict:
+    def extract_stop_dict(
+        self, timezone: str = metadata.DEFAULT_TIMEZONE, stalled_timeout: int = 90
+    ) -> dict:
         """Get the departure times for all stops in the feed.
 
         Parameters
         ----------
         timezone : str
             Name of the timezone to return within. Default to NYC time.
+        stalled_timeout : int
+            Number of seconds between the last movement of a train and the API update before
+            considering a train stalled. Default is 90 as recommended by the MTA.
+            Numbers less than 1 disable this check.
 
         Returns
         -------
         dict
             Dictionary containing train departure for all stops in the gtfs data.
             The dictionary will be a schema like ``{route: {stop: [t1, t2]}}``.
-        
+
         """
 
         trip_updates = (x.trip_update for x in self.entity if x.trip_update is not None)
-        vehicles = {e.vehicle.trip.trip_id: e.vehicle for e in self.entity if e.vehicle is not None}
+        vehicles = {
+            e.vehicle.trip.trip_id: e.vehicle
+            for e in self.entity
+            if e.vehicle is not None
+        }
 
         def is_trip_active(update: TripUpdate) -> bool:
             has_route = update.trip.route_is_assigned
             has_stops = update.stop_time_update is not None
 
             vehicle = vehicles.get(update.trip.trip_id)
-            if vehicle is None or vehicle.timestamp is None:
+            if stalled_timeout < 1 or vehicle is None or vehicle.timestamp is None:
                 return has_route and has_stops
 
             # as recommended by the MTA, we use these timestamps to determine if a train is stalled
-            train_stalled = (self.header.timestamp - vehicle.timestamp) > datetime.timedelta(seconds=90)
+            train_stalled = (
+                self.header.timestamp - vehicle.timestamp
+            ) > datetime.timedelta(seconds=stalled_timeout)
             return has_route and has_stops and not train_stalled
 
         # grab the updates with routes and stop times

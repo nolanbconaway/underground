@@ -181,7 +181,7 @@ def test_extract_dict_stalled_train_omitted():
                     },
                     "current_stop_sequence": 13,
                     "current_status": 1,
-                    "timestamp": 1699238728, # STALLED TRAIN
+                    "timestamp": 1699238728,  # STALLED TRAIN
                     "stop_id": "G14S",
                 },
             },
@@ -220,8 +220,16 @@ def test_extract_dict_stalled_train_omitted():
             },
         ],
     }
-    stops = SubwayFeed(**sample_data).extract_stop_dict()
-    assert len(stops["F"]["D17S"]) == 1
+    feed = SubwayFeed(**sample_data)
+
+    stops_no_timeout = feed.extract_stop_dict(stalled_timeout=0)
+    assert len(stops_no_timeout["F"]["D17S"]) == 2
+
+    stops_default = feed.extract_stop_dict()  # stalled_timeout=90
+    assert len(stops_default["F"]["D17S"]) == 1
+
+    stops_long_timeout = feed.extract_stop_dict(stalled_timeout=900)
+    assert len(stops_long_timeout["F"]["D17S"]) == 2
 
 
 def test_empty_route_id():
