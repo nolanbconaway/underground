@@ -20,7 +20,7 @@ INSTALL_REQUIRES = [
 
 DEV_REQUIRES = [
     "pytest==7.*",
-    "tox==4.*",
+    "tox>=3,<5",
     "black==23.*",
     "pytest-cov==4.*",
     "codecov==2.*",
