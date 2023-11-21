@@ -56,4 +56,5 @@ setup(
     extras_require=dict(dev=DEV_REQUIRES),
     entry_points={"console_scripts": ["underground = underground.cli.cli:entry_point"]},
     package_data={"underground": ["version"]},
+    data_files=[("", ["readme.md"])],  # add the readme
 )

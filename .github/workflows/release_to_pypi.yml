@@ -22,11 +22,11 @@ jobs:
 
       - name: Install Dependencies
         run: |
-          pip install --upgrade pip
-          pip install twine wheel --upgrade
+          pip install pip==23.*
+          pip install twine==4.* build==1.*
 
       - name: Build Distribution
-        run: python setup.py sdist bdist_wheel
+        run: python -m build
 
       - name: Publish Python distribution to PyPI
         uses: pypa/gh-action-pypi-publish@release/v1
