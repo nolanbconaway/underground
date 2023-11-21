@@ -26,9 +26,14 @@ jobs:
         with:
           path: ~/.cache/pip
           key: |
-            "pip-{0}-{1}-{2}".format(
-              runner.os, matrix.python-version, hashFiles('setup.py')
-            )
+            ${{
+              format(
+                'pip-{0}-{1}-{2}',
+                runner.os,
+                matrix.python-version,
+                hashFiles('setup.py')
+              )
+            }}
 
       - name: Install Dependencies
         run: |
