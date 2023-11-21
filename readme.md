@@ -1,7 +1,7 @@
 # Python MTA Utilities
 
 [![badge](https://github.com/nolanbconaway/underground/workflows/Push/badge.svg)](https://github.com/nolanbconaway/underground/actions)
-[![codecov](https://codecov.io/gh/nolanbconaway/underground/branch/main/graph/badge.svg)](https://codecov.io/gh/nolanbconaway/underground)
+[![codecov](https://codecov.io/gh/nolanbconaway/underground/graph/badge.svg?token=sK4mUxBVcD)](https://codecov.io/gh/nolanbconaway/underground)
 [![PyPI - Python Version](https://img.shields.io/pypi/pyversions/underground)](https://pypi.org/project/underground/)
 [![PyPI](https://img.shields.io/pypi/v/underground)](https://pypi.org/project/underground/)
 
