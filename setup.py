@@ -22,8 +22,6 @@ DEV_REQUIRES = [
     "pytest==7.*",
     "tox==4.*",
     "black==23.*",
-    "pytest-cov==4.*",
-    "codecov==2.*",
     "requests-mock==1.*",
 ]
 
