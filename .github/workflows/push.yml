@@ -27,7 +27,7 @@ jobs:
 
       - name: Install Dependencies
         run: |
-          python -m pip install --upgrade pip
+          pip install pip==23.*
           pip install .[dev]
 
       - name: Black
