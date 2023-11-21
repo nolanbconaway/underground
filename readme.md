@@ -24,32 +24,6 @@ pip install git+https://github.com/nolanbconaway/underground.git#egg=underground
 To request data from the MTA, you'll also need a free API key.
 [Register here](https://api.mta.info/).
 
-### Version 0.2.7.4 vs 0.3.0
-
-On May 1 2020, the MTA is sunsetting the [datamine.mta.info](http://datamine.mta.info/) service. The new API ([api.mta.info](https://api.mta.info/)) provides identical data but with a new request API. 
-
-Users of 0.2.x will need to migrate by doing the following:
-
-1. **Get a new API key at [api.mta.info](https://api.mta.info/).** This key is longer than the one provided by the datamine API. Underground understands this key in the same way as the old one.
-2. **Replace all feed IDs with route IDs or URLs.** The feed IDs have changed for the new API, and not all feeds have IDs any more. Version 0.3 of Underground was built with a `route_or_url` concept for feed selection. Users may provide the URL for the feed they want (see [this page](https://api.mta.info/#/subwayRealTimeFeeds)), or they may provide a route ID (in which case the appropriate URL is then selected).
-
-Code from v0.2.x such as this:
-
-```python
-feed = SubwayFeed.get(metadata.get_feed_id('Q'))
-```
-
-Now becomes in v0.3:
-
-```python
-# under the hood, the correct URL is selected.
-feed = SubwayFeed.get('Q')
-
-# or 
-url = 'https://api-endpoint.mta.info/Dataservice/mtagtfsfeeds/nyct%2Fgtfs-nqrw'
-feed = SubwayFeed.get(url)
-```
-
 ## Python API
 
 Once you have your API key, use the Python API like:
@@ -102,22 +76,6 @@ feed = SubwayFeed.get(URL)
 
 The `underground` command line tool is also installed with the package.
 
-```
-$ underground --help
-Usage: underground [OPTIONS] COMMAND [ARGS]...
-
-  Command line handlers for MTA realtime data.
-
-Options:
-  --help  Show this message and exit.
-
-Commands:
-  feed       Request an MTA feed.
-  findstops  Find your stop ID.
-  stops      Print out train departure times for all stops on a subway line.
-  version    Print the underground version.
-```
-
 ### `feed` 
 ```
 $ underground feed --help
@@ -167,6 +125,11 @@ Options:
                           provided.
   -t, --timezone TEXT    Output timezone. Ignored if --epoch. Default to NYC
                           time.
+  -s, --stalled-timeout INTEGER  Number of seconds between the last movement
+                                 of a train and the API update before
+                                 considering a train stalled. Default is 90 as
+                                 recommended by the MTA. Numbers less than 1
+                                 disable this check.
   --help                 Show this message and exit.
 ```
 

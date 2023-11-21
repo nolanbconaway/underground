@@ -12,15 +12,13 @@ jobs:
       - uses: actions/checkout@v3
       - uses: actions/setup-python@v4
         with:
-          python-version: "3.7"
+          python-version: "3.10"
 
       - name: Set up Cache
         uses: actions/cache@v3
         with:
           path: ~/.cache/pip
-          key: ${{ runner.os }}-pip-${{ hashFiles('**/setup.py') }}
-          restore-keys: |
-            ${{ runner.os }}-pip-
+          key: pip-${{ runner.os }}-3.9-${{ hashFiles('setup.py') }}
 
       - name: Install Dependencies
         run: |
