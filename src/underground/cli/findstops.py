@@ -29,9 +29,9 @@ def request_data() -> zipfile.ZipFile:
 )
 def main(query, output_json):
     """Find your stop ID.
-    
+
     Query a location and look for your stop ID, like:
-    
+
     $ underground findstops parkside av
     """
     query_str = " ".join(query).lower().strip()  # make into single string

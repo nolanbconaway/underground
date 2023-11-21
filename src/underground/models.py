@@ -64,7 +64,7 @@ class Trip(pydantic.BaseModel):
     @property
     def route_id_mapped(self):
         """Find the parent route ID.
-        
+
         This is helpful for grabbing the, e.g., 5 Train when you might have a 5X.
         """
         return metadata.ROUTE_REMAP[self.route_id]
@@ -83,12 +83,12 @@ class StopTimeUpdate(pydantic.BaseModel):
     currently approaching, stopped at or about to leave. A stop is dropped from
     the sequence when the train departs the station.
 
-    Transit times are provided at all in-between stops except at those locations where 
-    there are “scheduled holds”. At those locations both arrival and departure times 
+    Transit times are provided at all in-between stops except at those locations where
+    there are “scheduled holds”. At those locations both arrival and departure times
     are given.
 
-    Note that the predicted times are not updated when the train is not moving. Feed 
-    consumers can detect this condition using the timestamp in the VehiclePosition 
+    Note that the predicted times are not updated when the train is not moving. Feed
+    consumers can detect this condition using the timestamp in the VehiclePosition
     message.
     """
 
@@ -99,7 +99,7 @@ class StopTimeUpdate(pydantic.BaseModel):
     @property
     def depart_or_arrive(self) -> UnixTimestamp:
         """Return the departure or arrival time if either are specified.
-        
+
         This OR should usually be called because the MTA is inconsistent about when
         arrival/departure are specified, but when both are supplied they are usually
         the same time.
@@ -113,12 +113,12 @@ class StopTimeUpdate(pydantic.BaseModel):
 class TripUpdate(pydantic.BaseModel):
     """Info on trips that are underway or scheduled to start within 30 mins.
 
-    Trips are usually assigned to a physical train a few minutes before the scheduled 
+    Trips are usually assigned to a physical train a few minutes before the scheduled
     start time, sometimes just a few seconds before.
 
-    If a trip is included in the GTFS-realtime feed, there is a high probability that 
-    it will depart from its originating terminal as planned. It is more likely that a 
-    train that is never assigned a trip identifier to be changed or cancelled than an 
+    If a trip is included in the GTFS-realtime feed, there is a high probability that
+    it will depart from its originating terminal as planned. It is more likely that a
+    train that is never assigned a trip identifier to be changed or cancelled than an
     assigned one.
     """
 
@@ -128,28 +128,28 @@ class TripUpdate(pydantic.BaseModel):
 
 class Vehicle(pydantic.BaseModel):
     """Data model for the vehicle feed message.
-    
+
     From the MTA docs:
-    
-    A VehiclePosition entity is provided for every trip when it starts moving. Note that 
-    a train can be assigned (see TripUpdate) but has not started to move (e.g. a train 
+
+    A VehiclePosition entity is provided for every trip when it starts moving. Note that
+    a train can be assigned (see TripUpdate) but has not started to move (e.g. a train
     waiting to leave the origin station), therefore, no VehiclePosition is provided.
 
-    The motivation to include VehiclePosition is to provide the timestamp field. This 
-    is the time of the last detected movement of the train. This allows feed consumers 
-    to detect the situation when a train stops moving (aka stalled). The platform 
-    countdown clocks only count down when trains are moving otherwise they persist the 
-    last published arrival time for that train. If one wants to mimic this behavior you 
+    The motivation to include VehiclePosition is to provide the timestamp field. This
+    is the time of the last detected movement of the train. This allows feed consumers
+    to detect the situation when a train stops moving (aka stalled). The platform
+    countdown clocks only count down when trains are moving otherwise they persist the
+    last published arrival time for that train. If one wants to mimic this behavior you
     must first determine the absence of movement (stalled train condition) ), then the
     countdown must be stopped.
 
-    As an example, a countdown could be stopped for a trip when the difference between 
-    the timestamp in the VehiclePosition and the timestamp in the field header is 
+    As an example, a countdown could be stopped for a trip when the difference between
+    the timestamp in the VehiclePosition and the timestamp in the field header is
     greater than, 90 seconds.
-    
-    Note: since VehiclePosition information is not provided until the train starts 
-    moving, it is recommended that feed consumers use the origin terminal departure to 
-    determine a train stalled condition. 
+
+    Note: since VehiclePosition information is not provided until the train starts
+    moving, it is recommended that feed consumers use the origin terminal departure to
+    determine a train stalled condition.
     """
 
     trip: Trip
@@ -160,7 +160,7 @@ class Vehicle(pydantic.BaseModel):
 
 class Entity(pydantic.BaseModel):
     """Model for an element within feed entity.
-    
+
     As a side note, I have never found a case where there is BOTH a VehiclePosition and
     a TripUpdate.
     """
@@ -172,7 +172,7 @@ class Entity(pydantic.BaseModel):
 
 class SubwayFeed(pydantic.BaseModel):
     """Model for the main MTA feed data structure.
-    
+
     Includes methods for easy creation and parsing of data.
     """
 
@@ -182,25 +182,25 @@ class SubwayFeed(pydantic.BaseModel):
     @staticmethod
     def get(route_or_url: str, retries: int = 100, api_key: str = None) -> "SubwayFeed":
         """Request feed data from the MTA.
-        
+
         Parameters
         ----------
         route_or_url : str
-            Route ID or feed url (per ``https://api.mta.info/#/subwayRealTimeFeeds``). 
-            If a route, the URL for that route is looked up. All routes served by that 
+            Route ID or feed url (per ``https://api.mta.info/#/subwayRealTimeFeeds``).
+            If a route, the URL for that route is looked up. All routes served by that
             URL will be included in the result.
         retries : int
             Number of retry attempts, with 1 second timeout between attempts.
-            Set to -1 for unlimited. Default 100. 
+            Set to -1 for unlimited. Default 100.
         api_key : str
-            MTA API key. If not provided, it will be read from the $MTA_API_KEY env 
+            MTA API key. If not provided, it will be read from the $MTA_API_KEY env
             variable.
 
         Returns
         -------
         SubwayFeed
             An instance of the SubwayFeed class with the requested data.
-        
+
         """
         return SubwayFeed(
             **feed.request_robust(

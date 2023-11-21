@@ -1,6 +1,6 @@
 name: Push
 
-on: [push, pull_request]
+on: push
 
 jobs:
   build:
@@ -8,10 +8,7 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-latest]
-        python-version: ["3.7", "3.8", "3.9", "3.10"]
-        include:
-          - python-version: "3.6"
-            os: "ubuntu-20.04"
+        python-version: ["3.7", "3.8", "3.9", "3.10", "3.11", "3.12"]
             
     steps:
       - uses: actions/checkout@v3
@@ -25,14 +22,13 @@ jobs:
         uses: actions/cache@v3
         with:
           path: ~/.cache/pip
-          key: ${{ runner.os }}-pip-${{ hashFiles('**/setup.py') }}
-          restore-keys: |
-            ${{ runner.os }}-pip-
+          key: |
+            ${{ format('pip-{0}-{1}', matrix.python-version, hashFiles('setup.py')) }}
 
       - name: Install Dependencies
         run: |
-          python -m pip install --upgrade pip
-          pip install --editable .[dev]
+          pip install pip==23.*
+          pip install .[dev]
 
       - name: Black
         run: black src test --check --verbose

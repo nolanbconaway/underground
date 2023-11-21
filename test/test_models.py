@@ -234,7 +234,7 @@ def test_extract_dict_stalled_train_omitted():
 
 def test_empty_route_id():
     """Test the route functionality when the route id is a blacnk string.
-    
+
     This uses example data i found in the wild.
     """
     trip = {"route_id": "", "start_date": "20191120", "trip_id": "060750_..N"}

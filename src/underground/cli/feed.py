@@ -39,7 +39,7 @@ def main(route_or_url, api_key, output_json, retries):
 
       \b
       underground feed Q --json > feed_nrqw.json
-  
+
       \b
       URL='https://api-endpoint.mta.info/Dataservice/mtagtfsfeeds/nyct%2Fgtfs-nqrw' &&
       underground feed $URL --json > feed_nrqw.json
