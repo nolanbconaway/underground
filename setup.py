@@ -20,7 +20,7 @@ INSTALL_REQUIRES = [
 
 DEV_REQUIRES = [
     "pytest==7.*",
-    "tox>=3,<5",
+    "tox==4.*",
     "black==23.*",
     "pytest-cov==4.*",
     "codecov==2.*",
@@ -40,7 +40,6 @@ setup(
     author_email="nolanbconaway@gmail.com",
     url="https://github.com/nolanbconaway/underground",
     classifiers=[
-        "Programming Language :: Python :: 3.6",
         "Programming Language :: Python :: 3.7",
         "Programming Language :: Python :: 3.8",
         "Programming Language :: Python :: 3.9",
