@@ -179,7 +179,8 @@ def test_stopstxt(monkeypatch, args):
         content = zipfile.ZipFile(io.BytesIO(file.read()))
 
     monkeypatch.setattr(
-        "underground.cli.findstops.request_data", lambda: content,
+        "underground.cli.findstops.request_data",
+        lambda: content,
     )
     runner = CliRunner()
     result = runner.invoke(findstops_cli.main, args)
@@ -195,7 +196,8 @@ def test_stopstxt_json(monkeypatch, args):
         content = zipfile.ZipFile(io.BytesIO(file.read()))
 
     monkeypatch.setattr(
-        "underground.cli.findstops.request_data", lambda: content,
+        "underground.cli.findstops.request_data",
+        lambda: content,
     )
     runner = CliRunner()
     result = runner.invoke(findstops_cli.main, args + ["--json"])

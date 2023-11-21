@@ -18,12 +18,12 @@ class EmptyFeedError(Exception):
 
 def load_protobuf(protobuf_bytes: bytes) -> dict:
     """Process a protobuf bytes object into native python.
-    
+
     Parameters
     ----------
     protobuf_bytes : bytes
         Protobuuf data, as returned from the raw request.
-    
+
     Returns
     -------
     Processed feed data.
@@ -42,15 +42,15 @@ def request(route_or_url: str, api_key: str = None) -> bytes:
     """Send a HTTP GET request to the MTA for realtime feed data.
 
     Occassionally a feed is requested as the MTA is writing updated data to the file,
-    and the feed's contents are not complete. This function does _not_ validate the 
+    and the feed's contents are not complete. This function does _not_ validate the
     contents of the data, but only returns the request contents as served by the MTA.
-    
+
     Parameters
     ----------
     route_or_url : str
         Route ID or feed url (per ``https://api.mta.info/#/subwayRealTimeFeeds``).
     api_key : str
-       MTA API key. If not provided, it will be read from the $MTA_API_KEY env 
+       MTA API key. If not provided, it will be read from the $MTA_API_KEY env
        variable.
 
     Returns
@@ -86,28 +86,28 @@ def request_robust(
     """Request feed data with validations and retries.
 
     Occassionally a feed is requested as the MTA is writing updated data to the file,
-    and the feed's contents are not complete. This function validates data completeness 
-    and retries if the data are not complete. Since we are processing the protobuf 
+    and the feed's contents are not complete. This function validates data completeness
+    and retries if the data are not complete. Since we are processing the protobuf
     anyway, there is an option to return the processed data as familiar python objects.
-    
+
     Parameters
     ----------
     route_or_url : str
         Route ID or feed url (per ``https://api.mta.info/#/subwayRealTimeFeeds``).
     retries : int
         Number of retry attempts, with 1 second timeout between attempts.
-        Set to -1 for unlimited. Default 100. 
+        Set to -1 for unlimited. Default 100.
     api_key : str
-       MTA API key. If not provided, it will be read from the $MTA_API_KEY env 
+       MTA API key. If not provided, it will be read from the $MTA_API_KEY env
        variable.
     return_dict : bool
         Option to return the process data as a dict rather than as raw protobuf data.
         This is equivalent to running ``load_protobuf(request_robust(...))``.
-    
+
     Returns
     -------
     bytes or dict
-        The current GTFS data as bytes or a dictionary, depending on the 
+        The current GTFS data as bytes or a dictionary, depending on the
         ``return_dict`` flag.
 
     """
@@ -119,7 +119,6 @@ def request_robust(
             break  # break if success
 
         except (EmptyFeedError, google.protobuf.message.DecodeError):
-
             # raise if we're out of retries
             if attempt == retries:
                 raise

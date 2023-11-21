@@ -13,7 +13,7 @@ INSTALL_REQUIRES = [
     "gtfs-realtime-bindings==0.0.6",
     "protobuf>=3.19.6,<=3.20.3",
     "protobuf3-to-dict==0.1.*",
-    "click~=7.0",
+    "click>=7,<9",
     "pydantic~=1.9.2",
     "pytz>=2019.2",
 ]
@@ -21,7 +21,7 @@ INSTALL_REQUIRES = [
 DEV_REQUIRES = [
     "pytest==7.*",
     "tox==4.*",
-    "black==23.*"
+    "black==23.*",
     "pytest-cov==4.*",
     "codecov==2.*",
     "requests-mock==1.*",
@@ -45,6 +45,8 @@ setup(
         "Programming Language :: Python :: 3.8",
         "Programming Language :: Python :: 3.9",
         "Programming Language :: Python :: 3.10",
+        "Programming Language :: Python :: 3.11",
+        "Programming Language :: Python :: 3.12",
     ],
     keywords=["nyc", "transit", "subway", "command-line", "cli"],
     license="MIT",
