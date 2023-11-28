@@ -18,7 +18,7 @@ jobs:
         uses: actions/cache@v3
         with:
           path: ~/.cache/pip
-          key: pip-3.9-${{ hashFiles('setup.py') }}
+          key: pip-3.10-${{ hashFiles('setup.py') }}
 
       - name: Install Dependencies
         run: |
