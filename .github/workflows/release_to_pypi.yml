@@ -6,8 +6,14 @@ on:
       - published
 
 jobs:
-  run:
+  pypi-publish:
     runs-on: ubuntu-latest
+    environment:
+      name: pypi
+      url: https://pypi.org/p/underground
+    permissions:
+      id-token: write
+
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-python@v4
@@ -30,6 +36,3 @@ jobs:
 
       - name: Publish Python distribution to PyPI
         uses: pypa/gh-action-pypi-publish@release/v1
-        with:
-          user: __token__
-          password: ${{ secrets.PYPI_TOKEN }}
