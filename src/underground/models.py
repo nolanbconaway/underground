@@ -122,7 +122,7 @@ class TripUpdate(pydantic.BaseModel):
     """
 
     trip: Trip
-    stop_time_update: typing.Optional[typing.List[StopTimeUpdate]] = None
+    stop_time_update: typing.Optional[list[StopTimeUpdate]] = None
 
 
 class Vehicle(pydantic.BaseModel):
@@ -176,7 +176,7 @@ class SubwayFeed(pydantic.BaseModel):
     """
 
     header: FeedHeader
-    entity: typing.List[Entity]
+    entity: list[Entity]
 
     @staticmethod
     def get(
@@ -214,7 +214,7 @@ class SubwayFeed(pydantic.BaseModel):
 
     def extract_stop_dict(
         self, timezone: str = metadata.DEFAULT_TIMEZONE, stalled_timeout: int = 90
-    ) -> typing.Dict[str, typing.Dict[str, typing.List[datetime.datetime]]]:
+    ) -> dict[str, dict[str, list[datetime.datetime]]]:
         """Get the departure times for all stops in the feed.
 
         Parameters

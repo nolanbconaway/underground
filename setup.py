@@ -37,7 +37,6 @@ setup(
     author_email="nolanbconaway@gmail.com",
     url="https://github.com/nolanbconaway/underground",
     classifiers=[
-        "Programming Language :: Python :: 3.8",
         "Programming Language :: Python :: 3.9",
         "Programming Language :: Python :: 3.10",
         "Programming Language :: Python :: 3.11",
