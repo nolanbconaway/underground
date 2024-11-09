@@ -55,8 +55,7 @@ class Trip(pydantic.BaseModel):
         """Check for a valid route ID value."""
         if route_id not in metadata.ROUTE_REMAP:
             raise ValueError(
-                "Invalid route (%s). Must be one of %s."
-                % (route_id, str(set(metadata.ROUTE_REMAP.keys())))
+                f"Invalid route ({route_id}). Must be one of {set(metadata.ROUTE_REMAP.keys())}."
             )
 
         return route_id
@@ -180,7 +179,9 @@ class SubwayFeed(pydantic.BaseModel):
     entity: typing.List[Entity]
 
     @staticmethod
-    def get(route_or_url: str, retries: int = 100, api_key: str = None) -> "SubwayFeed":
+    def get(
+        route_or_url: str, retries: int = 100, api_key: typing.Optional[str] = None
+    ) -> "SubwayFeed":
         """Request feed data from the MTA.
 
         Parameters

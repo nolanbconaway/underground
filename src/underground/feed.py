@@ -38,7 +38,7 @@ def load_protobuf(protobuf_bytes: bytes) -> dict:
     return feed_dict
 
 
-def request(route_or_url: str, api_key: str = None) -> bytes:
+def request(route_or_url: str, api_key: typing.Optional[str] = None) -> bytes:
     """Send a HTTP GET request to the MTA for realtime feed data.
 
     Occassionally a feed is requested as the MTA is writing updated data to the file,
@@ -80,7 +80,7 @@ def request(route_or_url: str, api_key: str = None) -> bytes:
 def request_robust(
     route_or_url: str,
     retries: int = 100,
-    api_key: str = None,
+    api_key: typing.Optional[str] = None,
     return_dict: bool = False,
 ) -> typing.Union[dict, bytes]:
     """Request feed data with validations and retries.
