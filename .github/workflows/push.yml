@@ -24,10 +24,5 @@ jobs:
           pip install pip==24.*
           pip install .[dev]
 
-      - name: Ruff
-        run: |
-          ruff check
-          ruff format --check
-
-      - name: Pytest
-        run: pytest --verbose
+      - name: Test
+        run: make lint-test
