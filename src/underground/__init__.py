@@ -1,4 +1,5 @@
 """A realtime MTA module."""
+
 from pathlib import Path
 
 from .models import SubwayFeed

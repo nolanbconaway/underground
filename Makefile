@@ -9,8 +9,8 @@ format:
 	@ ruff format
 
 .PHONY:
-test:
-	@ pytest tests --verbose
+pytest:
+	pytest test --verbose
 
 .PHONY:
-lint-test: lint test
+lint-test: lint pytest

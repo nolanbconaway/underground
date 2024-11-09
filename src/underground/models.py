@@ -12,10 +12,10 @@ from underground import feed, metadata
 class UnixTimestamp(pydantic.BaseModel):
     """A unix timestamp model."""
 
-    time: datetime.datetime = None
+    time: typing.Optional[datetime.datetime] = None
 
     @property
-    def timestamp_nyc(self):
+    def timestamp_nyc(self) -> typing.Optional[datetime.datetime]:
         """Return the NYC datetime."""
         if not self.time:
             return None
@@ -29,7 +29,7 @@ class FeedHeader(pydantic.BaseModel):
     timestamp: datetime.datetime
 
     @property
-    def timestamp_nyc(self):
+    def timestamp_nyc(self) -> datetime.datetime:
         """Return the NYC datetime of the header."""
         return self.timestamp.astimezone(pytz.timezone(metadata.DEFAULT_TIMEZONE))
 
@@ -38,11 +38,11 @@ class Trip(pydantic.BaseModel):
     """Model describing a train trip."""
 
     trip_id: str
-    start_time: datetime.time = None
+    start_time: typing.Optional[datetime.time] = None
     start_date: int
     route_id: str
 
-    @pydantic.validator("start_date")
+    @pydantic.field_validator("start_date")
     def check_start_date(cls, start_date):
         """Start_date is an int, so check it conforms to date expectations."""
         if start_date < 19000101:
@@ -50,7 +50,7 @@ class Trip(pydantic.BaseModel):
 
         return start_date
 
-    @pydantic.validator("route_id")
+    @pydantic.field_validator("route_id")
     def check_route(cls, route_id):
         """Check for a valid route ID value."""
         if route_id not in metadata.ROUTE_REMAP:
@@ -61,7 +61,7 @@ class Trip(pydantic.BaseModel):
         return route_id
 
     @property
-    def route_id_mapped(self):
+    def route_id_mapped(self) -> str:
         """Find the parent route ID.
 
         This is helpful for grabbing the, e.g., 5 Train when you might have a 5X.
@@ -69,7 +69,7 @@ class Trip(pydantic.BaseModel):
         return metadata.ROUTE_REMAP[self.route_id]
 
     @property
-    def route_is_assigned(self):
+    def route_is_assigned(self) -> bool:
         """Return a flag indicating that there is a route."""
         return self.route_id != ""
 
@@ -92,11 +92,11 @@ class StopTimeUpdate(pydantic.BaseModel):
     """
 
     stop_id: str
-    arrival: UnixTimestamp = None
-    departure: UnixTimestamp = None
+    arrival: typing.Optional[UnixTimestamp] = None
+    departure: typing.Optional[UnixTimestamp] = None
 
     @property
-    def depart_or_arrive(self) -> UnixTimestamp:
+    def depart_or_arrive(self) -> typing.Optional[UnixTimestamp]:
         """Return the departure or arrival time if either are specified.
 
         This OR should usually be called because the MTA is inconsistent about when
@@ -122,7 +122,7 @@ class TripUpdate(pydantic.BaseModel):
     """
 
     trip: Trip
-    stop_time_update: typing.List[StopTimeUpdate] = None
+    stop_time_update: typing.Optional[typing.List[StopTimeUpdate]] = None
 
 
 class Vehicle(pydantic.BaseModel):
@@ -152,9 +152,9 @@ class Vehicle(pydantic.BaseModel):
     """
 
     trip: Trip
-    timestamp: datetime.datetime = None
-    current_stop_sequence: int = None
-    stop_id: str = None
+    timestamp: typing.Optional[datetime.datetime] = None
+    current_stop_sequence: typing.Optional[int] = None
+    stop_id: typing.Optional[str] = None
 
 
 class Entity(pydantic.BaseModel):
@@ -165,8 +165,8 @@ class Entity(pydantic.BaseModel):
     """
 
     id: str
-    vehicle: Vehicle = None
-    trip_update: TripUpdate = None
+    vehicle: typing.Optional[Vehicle] = None
+    trip_update: typing.Optional[TripUpdate] = None
 
 
 class SubwayFeed(pydantic.BaseModel):
@@ -214,7 +214,7 @@ class SubwayFeed(pydantic.BaseModel):
 
     def extract_stop_dict(
         self, timezone: str = metadata.DEFAULT_TIMEZONE, stalled_timeout: int = 90
-    ) -> dict:
+    ) -> typing.Dict[str, typing.Dict[str, typing.List[datetime.datetime]]]:
         """Get the departure times for all stops in the feed.
 
         Parameters
