@@ -1,4 +1,5 @@
 """Data model tests."""
+
 import datetime
 import os
 
@@ -18,9 +19,7 @@ def test_unix_timestamp():
     unix_ts = models.UnixTimestamp(time=0)
     epoch_time = datetime.datetime(1970, 1, 1, 0, 0, 0, 0, pytz.timezone("UTC"))
     assert unix_ts.time == epoch_time
-    assert unix_ts.timestamp_nyc == epoch_time.astimezone(
-        pytz.timezone(DEFAULT_TIMEZONE)
-    )
+    assert unix_ts.timestamp_nyc == epoch_time.astimezone(pytz.timezone(DEFAULT_TIMEZONE))
 
 
 def test_header_nyc_time():
@@ -88,7 +87,7 @@ def test_get(requests_mock, filename):
         return_value = file.read()
 
     requests_mock.get(requests_mock_any, content=return_value)
-    feed = SubwayFeed.get("1", api_key="FAKE")  ## valid route but not used at all
+    feed = SubwayFeed.get("1")  ## valid route but not used at all
 
     assert isinstance(feed, SubwayFeed)
     assert isinstance(feed.extract_stop_dict(), dict)
@@ -96,9 +95,7 @@ def test_get(requests_mock, filename):
 
 def test_trip_route_remap():
     """Test that the remapping works for a known route."""
-    trip = models.Trip(
-        trip_id="FAKE", start_time="01:00:00", start_date=20190101, route_id="5X"
-    )
+    trip = models.Trip(trip_id="FAKE", start_time="01:00:00", start_date=20190101, route_id="5X")
     assert trip.route_id_mapped == "5"
 
 

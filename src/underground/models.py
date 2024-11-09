@@ -180,7 +180,7 @@ class SubwayFeed(pydantic.BaseModel):
     entity: typing.List[Entity]
 
     @staticmethod
-    def get(route_or_url: str, retries: int = 100, api_key: str = None) -> "SubwayFeed":
+    def get(route_or_url: str, retries: int = 100) -> "SubwayFeed":
         """Request feed data from the MTA.
 
         Parameters
@@ -192,9 +192,6 @@ class SubwayFeed(pydantic.BaseModel):
         retries : int
             Number of retry attempts, with 1 second timeout between attempts.
             Set to -1 for unlimited. Default 100.
-        api_key : str
-            MTA API key. If not provided, it will be read from the $MTA_API_KEY env
-            variable.
 
         Returns
         -------
@@ -203,12 +200,7 @@ class SubwayFeed(pydantic.BaseModel):
 
         """
         return SubwayFeed(
-            **feed.request_robust(
-                route_or_url=route_or_url,
-                retries=retries,
-                api_key=api_key,
-                return_dict=True,
-            )
+            **feed.request_robust(route_or_url=route_or_url, retries=retries, return_dict=True)
         )
 
     def extract_stop_dict(

@@ -1,4 +1,5 @@
 """Test the CLI."""
+
 import io
 import json
 import os
@@ -52,9 +53,7 @@ def test_stops_epoch(monkeypatch):
             },
         ],
     }
-    monkeypatch.setattr(
-        "underground.SubwayFeed.get", lambda *x, **y: SubwayFeed(**sample_data)
-    )
+    monkeypatch.setattr("underground.SubwayFeed.get", lambda *x, **y: SubwayFeed(**sample_data))
     runner = CliRunner()
     result = runner.invoke(stops_cli.main, ["1", "-f", "epoch"])
     assert result.exit_code == 0
@@ -87,9 +86,7 @@ def test_stops_format(monkeypatch):
         ],
     }
 
-    monkeypatch.setattr(
-        "underground.SubwayFeed.get", lambda *x, **y: SubwayFeed(**sample_data)
-    )
+    monkeypatch.setattr("underground.SubwayFeed.get", lambda *x, **y: SubwayFeed(**sample_data))
     runner = CliRunner()
 
     # year
@@ -130,9 +127,7 @@ def test_stops_timezone(monkeypatch):
         ],
     }
 
-    monkeypatch.setattr(
-        "underground.SubwayFeed.get", lambda *x, **y: SubwayFeed(**sample_data)
-    )
+    monkeypatch.setattr("underground.SubwayFeed.get", lambda *x, **y: SubwayFeed(**sample_data))
     runner = CliRunner()
 
     # in hong kong time
@@ -155,7 +150,7 @@ def test_feed_bytes(requests_mock, filename):
         requests_mock.get(requests_mock_any, content=file.read())
 
     runner = CliRunner()
-    result = runner.invoke(feed_cli.main, ["1", "--api-key", "FAKE"])
+    result = runner.invoke(feed_cli.main, ["1"])
     assert result.exit_code == 0
     assert "entity" in load_protobuf(result.stdout_bytes)
 
@@ -167,7 +162,7 @@ def test_feed_json(requests_mock, filename):
         requests_mock.get(requests_mock_any, content=file.read())
 
     runner = CliRunner()
-    result = runner.invoke(feed_cli.main, ["1", "--json", "--api-key", "FAKE"])
+    result = runner.invoke(feed_cli.main, ["1", "--json"])
     assert result.exit_code == 0
     assert "entity" in json.loads(result.output)
 
