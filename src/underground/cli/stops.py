@@ -63,10 +63,7 @@ def main(route, fmt, retries, api_key, timezone, stalled_timeout):
     )
 
     # figure out how to format it
-    if fmt == "epoch":
-        format_fun = datetime_to_epoch
-    else:
-        format_fun = lambda x: x.strftime(fmt)
+    format_fun = datetime_to_epoch if fmt == "epoch" else lambda x: x.strftime(fmt)
 
     # echo the result
     for stop_id, departures in stops.items():

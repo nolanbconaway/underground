@@ -4,34 +4,25 @@ on: push
 
 jobs:
   build:
-    runs-on: ${{matrix.os}}
+    runs-on: ubuntu-latest
     strategy:
       matrix:
-        os: [ubuntu-latest]
-        python-version: ["3.7", "3.8", "3.9", "3.10", "3.11", "3.12"]
+        python-version: ["3.9", "3.10", "3.11", "3.12", "3.13"]
             
     steps:
       - uses: actions/checkout@v3
 
       - name: Set up Python
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python-version }}
-
-      - name: Set up Cache
-        uses: actions/cache@v3
-        with:
-          path: ~/.cache/pip
-          key: |
-            ${{ format('pip-{0}-{1}', matrix.python-version, hashFiles('setup.py')) }}
+          cache: 'pip'
+          cache-dependency-path: setup.py
 
       - name: Install Dependencies
         run: |
-          pip install pip==23.*
+          pip install pip==24.*
           pip install .[dev]
 
-      - name: Black
-        run: black src test --check --verbose
-
-      - name: Pytest
-        run: pytest --verbose
+      - name: Test
+        run: make lint-test

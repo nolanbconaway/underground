@@ -14,14 +14,13 @@ INSTALL_REQUIRES = [
     "protobuf>=3.19.6,<=3.20.3",
     "protobuf3-to-dict==0.1.*",
     "click>=7,<9",
-    "pydantic~=1.9.2",
+    "pydantic==2.*",
     "pytz>=2019.2",
 ]
 
 DEV_REQUIRES = [
     "pytest==7.*",
-    "tox==4.*",
-    "black==23.*",
+    "ruff==0.7.* ",
     "requests-mock==1.*",
 ]
 
@@ -38,12 +37,11 @@ setup(
     author_email="nolanbconaway@gmail.com",
     url="https://github.com/nolanbconaway/underground",
     classifiers=[
-        "Programming Language :: Python :: 3.7",
-        "Programming Language :: Python :: 3.8",
         "Programming Language :: Python :: 3.9",
         "Programming Language :: Python :: 3.10",
         "Programming Language :: Python :: 3.11",
         "Programming Language :: Python :: 3.12",
+        "Programming Language :: Python :: 3.13",
     ],
     keywords=["nyc", "transit", "subway", "command-line", "cli"],
     license="MIT",

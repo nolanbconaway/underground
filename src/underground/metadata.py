@@ -65,6 +65,6 @@ def resolve_url(route_or_url: str) -> str:
         return route_or_url
 
     if route_or_url not in ROUTE_REMAP:
-        raise ValueError("Unknown route or url: %s" % route_or_url)
+        raise ValueError(f"Unknown route or url: {route_or_url}")
 
     return ROUTE_FEED_MAP[ROUTE_REMAP[route_or_url]]
