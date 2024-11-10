@@ -10,12 +10,6 @@ from underground import feed, metadata
 @click.command()
 @click.argument("route_or_url")
 @click.option(
-    "--api-key",
-    "api_key",
-    default=None,
-    help="MTA API key. Will be read from $MTA_API_KEY if not provided.",
-)
-@click.option(
     "--json",
     "output_json",
     is_flag=True,
@@ -29,7 +23,7 @@ from underground import feed, metadata
     type=int,
     help="Retry attempts in case of API connection failure. Default 100.",
 )
-def main(route_or_url, api_key, output_json, retries):
+def main(route_or_url, output_json, retries):
     """Request an MTA feed via a route or URL.
 
     ROUTE_OR_URL may be either a feed URL or a route (which will be used to look up
@@ -53,7 +47,6 @@ def main(route_or_url, api_key, output_json, retries):
     data = feed.request_robust(
         route_or_url=route_or_url,
         retries=retries,
-        api_key=api_key,
         return_dict=output_json,
     )
 

@@ -88,7 +88,7 @@ def test_get(requests_mock, filename):
         return_value = file.read()
 
     requests_mock.get(requests_mock_any, content=return_value)
-    feed = SubwayFeed.get("1", api_key="FAKE")  ## valid route but not used at all
+    feed = SubwayFeed.get("1")  ## valid route but not used at all
 
     assert isinstance(feed, SubwayFeed)
     assert isinstance(feed.extract_stop_dict(), dict)

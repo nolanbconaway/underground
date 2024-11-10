@@ -1,4 +1,5 @@
 """Test the feed submodule."""
+
 import os
 import time
 
@@ -37,7 +38,7 @@ def test_robust_retry_logic(requests_mock, monkeypatch, retries):
 
     time_1 = time.time()
     with pytest.raises(feed.EmptyFeedError):
-        feed.request_robust("1", retries=retries, api_key="FAKE")
+        feed.request_robust("1", retries=retries)
     elapsed = time.time() - time_1
 
     assert elapsed >= retries
@@ -62,21 +63,13 @@ def test_request_invalid_feed():
         feed.request("NOT REAL")
 
 
-def test_request_no_api_key(monkeypatch):
-    """Test that request raises value error when no api key is available."""
-    monkeypatch.delenv("MTA_API_KEY", raising=False)
-
-    with pytest.raises(ValueError):
-        feed.request(next(iter(metadata.VALID_FEED_URLS)))
-
-
 @pytest.mark.parametrize("ret_code", [200, 500])
 def test_request_raise_status(requests_mock, ret_code):
     """Test the request raise status conditional."""
     feed_url = next(iter(metadata.VALID_FEED_URLS))
-    requests_mock.get(requests_mock_any, content="".encode(), status_code=ret_code)
+    requests_mock.get(requests_mock_any, content=b"", status_code=ret_code)
     if ret_code != 200:
         with pytest.raises(requests.HTTPError):
-            feed.request(feed_url, api_key="FAKE")
+            feed.request(feed_url)
     else:
-        feed.request(feed_url, api_key="FAKE")
+        feed.request(feed_url)

@@ -20,23 +20,16 @@ Or if you'd like to live dangerously:
 pip install git+https://github.com/nolanbconaway/underground.git#egg=underground
 ```
 
-To request data from the MTA, you'll also need a free API key.
-[Register here](https://api.mta.info/).
-
 ## Python API
 
-Once you have your API key, use the Python API like:
+Use the Python API like:
 
 ``` python
 import os
 
 from underground import metadata, SubwayFeed
 
-API_KEY = os.getenv('MTA_API_KEY')
 ROUTE = 'Q'
-feed = SubwayFeed.get(ROUTE, api_key=API_KEY)
-
-# request will read from $MTA_API_KEY if a key is not provided
 feed = SubwayFeed.get(ROUTE)
 
 # under the hood, the Q route is mapped to a URL. This call is equivalent:
@@ -93,9 +86,6 @@ Usage: underground feed [OPTIONS] ROUTE_OR_URL
       underground feed $URL --json > feed_nrqw.json
 
 Options:
-  --api-key TEXT         MTA API key. Will be read from $MTA_API_KEY if not
-                         provided.
-
   --json                 Option to output the feed data as JSON. Otherwise
                          output will be bytes.
 
@@ -120,8 +110,6 @@ Options:
                           unix timestamp.
   -r, --retries INTEGER  Retry attempts in case of API connection failure.
                           Default 100.
-  --api-key TEXT         MTA API key. Will be read from $MTA_API_KEY if not
-                          provided.
   -t, --timezone TEXT    Output timezone. Ignored if --epoch. Default to NYC
                           time.
   -s, --stalled-timeout INTEGER  Number of seconds between the last movement
@@ -135,7 +123,6 @@ Options:
 Stops are printed to stdout in the format `stop_id t1 t2 ... tn` .
 
 ``` sh
-$ export MTA_API_KEY='...'
 $ underground stops Q | tail -2
 Q05S 19:01 19:09 19:16 19:25 19:34 19:44 19:51 19:58
 Q04S 19:03 19:11 19:18 19:27 19:36 19:46 19:53 20:00

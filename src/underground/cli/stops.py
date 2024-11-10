@@ -33,12 +33,6 @@ def datetime_to_epoch(dttm: datetime.datetime) -> int:
     help="Retry attempts in case of API connection failure. Default 100.",
 )
 @click.option(
-    "--api-key",
-    "api_key",
-    default=None,
-    help="MTA API key. Will be read from $MTA_API_KEY if not provided.",
-)
-@click.option(
     "-t",
     "--timezone",
     "timezone",
@@ -54,10 +48,10 @@ def datetime_to_epoch(dttm: datetime.datetime) -> int:
     " update before considering a train stalled. Default is 90 as recommended"
     " by the MTA. Numbers less than 1 disable this check.",
 )
-def main(route, fmt, retries, api_key, timezone, stalled_timeout):
+def main(route, fmt, retries, timezone, stalled_timeout):
     """Print out train departure times for all stops on a subway line."""
     stops = (
-        SubwayFeed.get(api_key=api_key, route_or_url=route, retries=retries)
+        SubwayFeed.get(route_or_url=route, retries=retries)
         .extract_stop_dict(timezone=timezone, stalled_timeout=stalled_timeout)
         .get(route, dict())
     )
