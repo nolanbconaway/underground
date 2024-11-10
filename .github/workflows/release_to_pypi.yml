@@ -15,20 +15,16 @@ jobs:
       id-token: write
 
     steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-python@v4
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
         with:
           python-version: "3.10"
-
-      - name: Set up Cache
-        uses: actions/cache@v3
-        with:
-          path: ~/.cache/pip
-          key: pip-3.10-${{ hashFiles('setup.py') }}
+          cache: 'pip'
+          cache-dependency-path: setup.py
 
       - name: Install Dependencies
         run: |
-          pip install pip==23.*
+          pip install pip==24.*
           pip install twine==4.* build==1.*
 
       - name: Build Distribution
