@@ -1,6 +1,5 @@
 """Interact with the MTA GTFS api."""
 
-import os
 import time
 import typing
 
@@ -22,7 +21,7 @@ def load_protobuf(protobuf_bytes: bytes) -> dict:
     Parameters
     ----------
     protobuf_bytes : bytes
-        Protobuuf data, as returned from the raw request.
+        Protobuf data, as returned from the raw request.
 
     Returns
     -------
@@ -38,7 +37,7 @@ def load_protobuf(protobuf_bytes: bytes) -> dict:
     return feed_dict
 
 
-def request(route_or_url: str, api_key: typing.Optional[str] = None) -> bytes:
+def request(route_or_url: str) -> bytes:
     """Send a HTTP GET request to the MTA for realtime feed data.
 
     Occassionally a feed is requested as the MTA is writing updated data to the file,
@@ -49,9 +48,6 @@ def request(route_or_url: str, api_key: typing.Optional[str] = None) -> bytes:
     ----------
     route_or_url : str
         Route ID or feed url (per ``https://api.mta.info/#/subwayRealTimeFeeds``).
-    api_key : str
-       MTA API key. If not provided, it will be read from the $MTA_API_KEY env
-       variable.
 
     Returns
     -------
@@ -62,26 +58,15 @@ def request(route_or_url: str, api_key: typing.Optional[str] = None) -> bytes:
     # check feed
     url = metadata.resolve_url(route_or_url)
 
-    # get the API key.
-    api_key = api_key or os.getenv("MTA_API_KEY", None)
-    if api_key is None:
-        raise ValueError(
-            "No API key. pass to the called function "
-            "or set the $MTA_API_KEY environment variable."
-        )
-
     # make the request
-    res = requests.get(url, headers={"x-api-key": api_key})
+    res = requests.get(url)
     res.raise_for_status()
 
     return res.content
 
 
 def request_robust(
-    route_or_url: str,
-    retries: int = 100,
-    api_key: typing.Optional[str] = None,
-    return_dict: bool = False,
+    route_or_url: str, retries: int = 100, return_dict: bool = False
 ) -> typing.Union[dict, bytes]:
     """Request feed data with validations and retries.
 
@@ -97,9 +82,6 @@ def request_robust(
     retries : int
         Number of retry attempts, with 1 second timeout between attempts.
         Set to -1 for unlimited. Default 100.
-    api_key : str
-       MTA API key. If not provided, it will be read from the $MTA_API_KEY env
-       variable.
     return_dict : bool
         Option to return the process data as a dict rather than as raw protobuf data.
         This is equivalent to running ``load_protobuf(request_robust(...))``.
@@ -112,7 +94,7 @@ def request_robust(
 
     """
     # get protobuf bytes
-    protobuf_data = request(route_or_url=route_or_url, api_key=api_key)
+    protobuf_data = request(route_or_url=route_or_url)
     for attempt in range(retries + 1):
         try:
             feed_dict = load_protobuf(protobuf_data)
@@ -125,6 +107,6 @@ def request_robust(
 
             # wait 1 second and then make new protobuf data
             time.sleep(1)  # be cool to the MTA
-            protobuf_data = request(route_or_url=route_or_url, api_key=api_key)
+            protobuf_data = request(route_or_url=route_or_url)
 
     return feed_dict if return_dict else protobuf_data
