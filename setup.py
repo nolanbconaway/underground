@@ -15,7 +15,6 @@ INSTALL_REQUIRES = [
     "protobuf3-to-dict==0.1.*",
     "click>=7,<9",
     "pydantic==2.*",
-    "pytz>=2019.2",
 ]
 
 DEV_REQUIRES = [

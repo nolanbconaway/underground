@@ -1,10 +1,10 @@
 """Pydantic data models for MTA GFTS data."""
 
 import datetime
+import zoneinfo
 import typing
 
 import pydantic
-import pytz
 
 from underground import feed, metadata
 
@@ -19,7 +19,7 @@ class UnixTimestamp(pydantic.BaseModel):
         """Return the NYC datetime."""
         if not self.time:
             return None
-        return self.time.astimezone(pytz.timezone(metadata.DEFAULT_TIMEZONE))
+        return self.time.astimezone(zoneinfo.ZoneInfo(metadata.DEFAULT_TIMEZONE))
 
 
 class FeedHeader(pydantic.BaseModel):
@@ -31,7 +31,7 @@ class FeedHeader(pydantic.BaseModel):
     @property
     def timestamp_nyc(self) -> datetime.datetime:
         """Return the NYC datetime of the header."""
-        return self.timestamp.astimezone(pytz.timezone(metadata.DEFAULT_TIMEZONE))
+        return self.timestamp.astimezone(zoneinfo.ZoneInfo(metadata.DEFAULT_TIMEZONE))
 
 
 class Trip(pydantic.BaseModel):
@@ -248,7 +248,7 @@ class SubwayFeed(pydantic.BaseModel):
             (
                 trip.trip.route_id_mapped,
                 stop.stop_id,
-                (stop.depart_or_arrive).time.astimezone(pytz.timezone(timezone)),
+                (stop.depart_or_arrive).time.astimezone(zoneinfo.ZoneInfo(timezone)),
             )
             for trip in trip_updates_with_stops
             for stop in trip.stop_time_update
