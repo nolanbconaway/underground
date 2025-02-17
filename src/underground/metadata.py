@@ -1,7 +1,7 @@
 """Module metadata."""
 
 # because its for the NYC subway
-DEFAULT_TIMEZONE = "US/Eastern"
+DEFAULT_TIMEZONE = "America/New_York"
 
 # map a tuple of all routes per
 FEED_GROUPS = {

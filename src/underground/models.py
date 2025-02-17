@@ -1,10 +1,10 @@
 """Pydantic data models for MTA GFTS data."""
 
 import datetime
-import zoneinfo
 import typing
 
 import pydantic
+import zoneinfo
 
 from underground import feed, metadata
 
