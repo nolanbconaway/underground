@@ -1,9 +1,9 @@
 """Data model tests."""
 import datetime
+import zoneinfo
 import os
 
 import pytest
-import pytz
 from requests_mock import ANY as requests_mock_any
 
 from underground import SubwayFeed, models
@@ -16,10 +16,10 @@ from . import DATA_DIR, TEST_PROTOBUFS
 def test_unix_timestamp():
     """Test that datetimes are handled correctly."""
     unix_ts = models.UnixTimestamp(time=0)
-    epoch_time = datetime.datetime(1970, 1, 1, 0, 0, 0, 0, pytz.timezone("UTC"))
+    epoch_time = datetime.datetime(1970, 1, 1, 0, 0, 0, 0, zoneinfo.ZoneInfo("UTC"))
     assert unix_ts.time == epoch_time
     assert unix_ts.timestamp_nyc == epoch_time.astimezone(
-        pytz.timezone(DEFAULT_TIMEZONE)
+        zoneinfo.ZoneInfo(DEFAULT_TIMEZONE)
     )
 
 

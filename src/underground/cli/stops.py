@@ -1,9 +1,9 @@
 """Get upcoming stops along a train route."""
 
 import datetime
+import zoneinfo
 
 import click
-import pytz
 
 from underground import metadata
 from underground.models import SubwayFeed
@@ -11,7 +11,7 @@ from underground.models import SubwayFeed
 
 def datetime_to_epoch(dttm: datetime.datetime) -> int:
     """Return a unix timestmap from a datetime."""
-    return int(dttm.astimezone(pytz.timezone("UTC")).timestamp())
+    return int(dttm.astimezone(zoneinfo.ZoneInfo("UTC")).timestamp())
 
 
 @click.command()
