@@ -1,9 +1,9 @@
 """Get upcoming stops along a train route."""
 
 import datetime
-import zoneinfo
 
 import click
+import zoneinfo
 
 from underground import metadata
 from underground.models import SubwayFeed
