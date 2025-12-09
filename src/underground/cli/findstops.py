@@ -11,17 +11,17 @@ import requests
 
 # url to the zip file containing MTA metadata
 # see "Static GTFS Data" at https://www.mta.info/developers
-DATA_URLS = [
+DATA_URLS = {
     # subway
-    "http://web.mta.info/developers/data/nyct/subway/google_transit.zip",
+    "subway": "http://web.mta.info/developers/data/nyct/subway/google_transit.zip",
     # buses
-    "https://rrgtfsfeeds.s3.amazonaws.com/gtfs_bx.zip",
-    "https://rrgtfsfeeds.s3.amazonaws.com/gtfs_b.zip",
-    "https://rrgtfsfeeds.s3.amazonaws.com/gtfs_m.zip",
-    "https://rrgtfsfeeds.s3.amazonaws.com/gtfs_q.zip",
-    "https://rrgtfsfeeds.s3.amazonaws.com/gtfs_si.zip",
-    "https://rrgtfsfeeds.s3.amazonaws.com/gtfs_busco.zip",
-]
+    "buses_bx": "https://rrgtfsfeeds.s3.amazonaws.com/gtfs_bx.zip",
+    "buses_bk": "https://rrgtfsfeeds.s3.amazonaws.com/gtfs_b.zip",
+    "buses_m": "https://rrgtfsfeeds.s3.amazonaws.com/gtfs_m.zip",
+    "buses_q": "https://rrgtfsfeeds.s3.amazonaws.com/gtfs_q.zip",
+    "buses_si": "https://rrgtfsfeeds.s3.amazonaws.com/gtfs_si.zip",
+    "buses_busco": "https://rrgtfsfeeds.s3.amazonaws.com/gtfs_busco.zip",
+}
 
 
 def request_data(url: str) -> zipfile.ZipFile:
@@ -32,11 +32,14 @@ def request_data(url: str) -> zipfile.ZipFile:
 
 
 def get_stops(include_buses: bool) -> Generator[dict[str, str], None, None]:
-    for url in DATA_URLS:
+    for source, url in DATA_URLS.items():
         zpfile = request_data(url)
         stops_txt = io.StringIO(zpfile.read("stops.txt").decode())
 
-        yield from csv.DictReader(stops_txt)
+        def add_source(row: dict[str, str]) -> dict[str, str]:
+            return {"_source": source, **row}
+
+        yield from map(add_source, csv.DictReader(stops_txt))
 
         if not include_buses:
             break
@@ -95,6 +98,7 @@ def main(query, output_json, include_buses):
                     direction=stop["direction"].upper(),
                     stop_lat=float(stop["stop_lat"]),
                     stop_lon=float(stop["stop_lon"]),
+                    source=stop["_source"],
                 )
             )
 
@@ -103,8 +107,9 @@ def main(query, output_json, include_buses):
             click.echo(
                 f"""ID: {stop['stop_id']:<6}   """
                 f"""Direction: {stop['direction']}    """
-                f"""Lat/Lon: {stop['stop_lat']},{stop['stop_lon']}    """
-                f"""Name: {stop['stop_name']}"""
+                + (f"""Data Source: {stop['source']:<12} """ if include_buses else "")
+                + f"""Lat/Lon: {stop['stop_lat']:<9},{stop['stop_lon']:<10}  """
+                f"""Name: {stop['stop_name']}    """
             )
     else:
         click.echo(json.dumps(matched_stops))
