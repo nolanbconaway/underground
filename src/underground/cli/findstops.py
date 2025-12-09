@@ -57,7 +57,7 @@ def get_stops(include_buses: bool) -> Generator[dict[str, str], None, None]:
     "--buses",
     "include_buses",
     is_flag=True,
-    help="Option also search bus stops. Slower.",
+    help="Option to also search bus stops. Slower.",
 )
 def main(query, output_json, include_buses):
     """Find your stop ID.
