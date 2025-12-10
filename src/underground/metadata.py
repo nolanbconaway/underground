@@ -13,17 +13,14 @@ FEED_GROUPS = {
         "5",
         "6",
         "GS",
-    ),
-    # SS route is undocumented but i have seen it here "in the wild".
-    "https://api-endpoint.mta.info/Dataservice/mtagtfsfeeds/nyct%2Fgtfs-7": (
         "7",
+        # SS route is undocumented but i have seen it here "in the wild".
         "SS",
     ),
     "https://api-endpoint.mta.info/Dataservice/mtagtfsfeeds/nyct%2Fgtfs-ace": (
         "A",
         "C",
         "E",
-        "FS",
         "H",
     ),
     "https://api-endpoint.mta.info/Dataservice/mtagtfsfeeds/nyct%2Fgtfs-bdfm": (
@@ -31,6 +28,7 @@ FEED_GROUPS = {
         "D",
         "F",
         "M",
+        "FS",
     ),
     "https://api-endpoint.mta.info/Dataservice/mtagtfsfeeds/nyct%2Fgtfs-g": ("G",),
     "https://api-endpoint.mta.info/Dataservice/mtagtfsfeeds/nyct%2Fgtfs-jz": ("J", "Z"),
@@ -43,7 +41,7 @@ FEED_GROUPS = {
     ),
     "https://api-endpoint.mta.info/Dataservice/mtagtfsfeeds/nyct%2Fgtfs-si": ("SI",),
     # buses all share the same feed
-     # fmt: off
+    # fmt: off
     "https://gtfsrt.prod.obanyc.com/tripUpdates": (
         "B1", "B100", "B101", "B103", "B106", "B11", "B111", "B12", "B13", "B14", "B15",
         "B16", "B17", "B2", "B20", "B24", "B25", "B26", "B3", "B31", "B32", "B35",
@@ -82,8 +80,8 @@ FEED_GROUPS = {
         "SIM26", "SIM3", "SIM30", "SIM31", "SIM32", "SIM33", "SIM33C", "SIM34", "SIM35",
         "SIM3C", "SIM4", "SIM4C", "SIM4X", "SIM5", "SIM6", "SIM7", "SIM8", "SIM8X",
         "SIM9", "X27", "X28", "X37", "X38" )
-        # fmt: on
-        }
+    # fmt: on
+}
 
 # get a route to feed mapping
 ROUTE_FEED_MAP = {route: url for url, routes in FEED_GROUPS.items() for route in routes}
