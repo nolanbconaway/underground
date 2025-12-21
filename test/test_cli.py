@@ -175,7 +175,7 @@ def test_stopstxt(monkeypatch, args):
 
     monkeypatch.setattr(
         "underground.cli.findstops.request_data",
-        lambda: content,
+        lambda *_: content,
     )
     runner = CliRunner()
     result = runner.invoke(findstops_cli.main, args)
@@ -192,7 +192,7 @@ def test_stopstxt_json(monkeypatch, args):
 
     monkeypatch.setattr(
         "underground.cli.findstops.request_data",
-        lambda: content,
+        lambda *_: content,
     )
     runner = CliRunner()
     result = runner.invoke(findstops_cli.main, [*args, "--json"])
@@ -230,4 +230,4 @@ def test_findstop_request(requests_mock):
 
     requests_mock.get(requests_mock_any, content=zip_data)
 
-    findstops_cli.request_data()
+    findstops_cli.request_data("http://fake_url")

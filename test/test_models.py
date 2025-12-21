@@ -1,9 +1,10 @@
 """Data model tests."""
+
 import datetime
-import zoneinfo
 import os
 
 import pytest
+import zoneinfo
 from requests_mock import ANY as requests_mock_any
 
 from underground import SubwayFeed, models
@@ -18,9 +19,7 @@ def test_unix_timestamp():
     unix_ts = models.UnixTimestamp(time=0)
     epoch_time = datetime.datetime(1970, 1, 1, 0, 0, 0, 0, zoneinfo.ZoneInfo("UTC"))
     assert unix_ts.time == epoch_time
-    assert unix_ts.timestamp_nyc == epoch_time.astimezone(
-        zoneinfo.ZoneInfo(DEFAULT_TIMEZONE)
-    )
+    assert unix_ts.timestamp_nyc == epoch_time.astimezone(zoneinfo.ZoneInfo(DEFAULT_TIMEZONE))
 
 
 def test_header_nyc_time():
@@ -96,9 +95,7 @@ def test_get(requests_mock, filename):
 
 def test_trip_route_remap():
     """Test that the remapping works for a known route."""
-    trip = models.Trip(
-        trip_id="FAKE", start_time="01:00:00", start_date=20190101, route_id="5X"
-    )
+    trip = models.Trip(trip_id="FAKE", start_time="01:00:00", start_date=20190101, route_id="5X")
     assert trip.route_id_mapped == "5"
 
 

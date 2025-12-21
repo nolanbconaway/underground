@@ -3,8 +3,8 @@
 import csv
 import io
 import json
-from typing import Generator
 import zipfile
+from typing import Generator
 
 import click
 import requests
@@ -37,7 +37,7 @@ def get_stops(include_buses: bool) -> Generator[dict[str, str], None, None]:
         stops_txt = io.StringIO(zpfile.read("stops.txt").decode())
 
         def add_source(row: dict[str, str]) -> dict[str, str]:
-            return {"_source": source, **row}
+            return {"_source": source, **row}  # noqa: B023
 
         yield from map(add_source, csv.DictReader(stops_txt))
 
