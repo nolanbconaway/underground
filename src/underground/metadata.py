@@ -4,6 +4,7 @@
 DEFAULT_TIMEZONE = "America/New_York"
 
 # map a tuple of all routes per
+# fmt: off
 FEED_GROUPS = {
     "https://api-endpoint.mta.info/Dataservice/mtagtfsfeeds/nyct%2Fgtfs": (
         "1",
@@ -41,7 +42,6 @@ FEED_GROUPS = {
     ),
     "https://api-endpoint.mta.info/Dataservice/mtagtfsfeeds/nyct%2Fgtfs-si": ("SI",),
     # buses all share the same feed
-    # fmt: off
     "https://gtfsrt.prod.obanyc.com/tripUpdates": (
         "B1", "B100", "B101", "B103", "B106", "B11", "B111", "B12", "B13", "B14", "B15",
         "B16", "B17", "B2", "B20", "B24", "B25", "B26", "B3", "B31", "B32", "B35",
@@ -80,8 +80,8 @@ FEED_GROUPS = {
         "SIM26", "SIM3", "SIM30", "SIM31", "SIM32", "SIM33", "SIM33C", "SIM34", "SIM35",
         "SIM3C", "SIM4", "SIM4C", "SIM4X", "SIM5", "SIM6", "SIM7", "SIM8", "SIM8X",
         "SIM9", "X27", "X28", "X37", "X38" )
-    # fmt: on
 }
+# fmt: on
 
 # get a route to feed mapping
 ROUTE_FEED_MAP = {route: url for url, routes in FEED_GROUPS.items() for route in routes}
