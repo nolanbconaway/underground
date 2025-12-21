@@ -153,11 +153,10 @@ Usage: underground findstops [OPTIONS] QUERY...
   $ underground findstops parkside av
 
 Options:
-
-  --json  Option to output the data as JSON. Otherwise will be human readable
-          table.
+  --json   Option to output the data as JSON. Otherwise will be human readable
+           table.
   --buses  Option to also search bus stops. Slower.
-  --help  Show this message and exit.
+  --help   Show this message and exit.
 ```
 
 Enter the name of your stop and a table of stops with matching names will be returned.
