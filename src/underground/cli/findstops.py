@@ -78,12 +78,12 @@ def main(query, output_json, include_buses):
             continue
 
         # parse stop direction
-        if stop["stop_id"].endswith("N"):
+        if stop["_source"] != "subway":
+            direction = "(BUS)"
+        elif stop["stop_id"].endswith("N"):
             direction = "NORTH"
         elif stop["stop_id"].endswith("S"):
             direction = "SOUTH"
-        elif include_buses:
-            direction = "(BUS)"
         else:
             raise ValueError(f"Cannot parse direction: {stop['stop_id']}.")
 
