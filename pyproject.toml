@@ -12,3 +12,6 @@ select = [
     "I",   # isort
     "RUF",  # ruff
 ]
+ignore = [
+    "UP045" # Convert to `X | None`
+]
