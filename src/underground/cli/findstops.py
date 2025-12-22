@@ -4,7 +4,7 @@ import csv
 import io
 import json
 import zipfile
-from typing import Generator
+from collections.abc import Generator
 
 import click
 import requests
@@ -105,11 +105,11 @@ def main(query, output_json, include_buses):
     if not output_json:
         for stop in matched_stops:
             click.echo(
-                f"""ID: {stop['stop_id']:<6}   """
-                f"""Direction: {stop['direction']}    """
-                + (f"""Data Source: {stop['source']:<12} """ if include_buses else "")
-                + f"""Lat/Lon: {stop['stop_lat']:<9},{stop['stop_lon']:<10}  """
-                f"""Name: {stop['stop_name']}    """
+                f"""ID: {stop["stop_id"]:<6}   """
+                f"""Direction: {stop["direction"]}    """
+                + (f"""Data Source: {stop["source"]:<12} """ if include_buses else "")
+                + f"""Lat/Lon: {stop["stop_lat"]:<9},{stop["stop_lon"]:<10}  """
+                f"""Name: {stop["stop_name"]}    """
             )
     else:
         click.echo(json.dumps(matched_stops))

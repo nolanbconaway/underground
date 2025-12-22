@@ -2,9 +2,9 @@
 
 import datetime
 import typing
+import zoneinfo
 
 import pydantic
-import zoneinfo
 
 from underground import feed, metadata
 

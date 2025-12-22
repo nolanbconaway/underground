@@ -1,9 +1,9 @@
 """Get upcoming stops along a train route."""
 
 import datetime
+import zoneinfo
 
 import click
-import zoneinfo
 
 from underground import metadata
 from underground.models import SubwayFeed
@@ -62,7 +62,7 @@ def main(route, fmt, retries, timezone, stalled_timeout):
     # echo the result
     for stop_id, departures in stops.items():
         departures_formatted = map(str, map(format_fun, sorted(departures)))
-        click.echo(f"""{stop_id} {' '.join(departures_formatted)}""")
+        click.echo(f"""{stop_id} {" ".join(departures_formatted)}""")
 
 
 if __name__ == "__main__":

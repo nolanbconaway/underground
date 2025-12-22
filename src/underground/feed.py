@@ -67,7 +67,7 @@ def request(route_or_url: str) -> bytes:
 
 def request_robust(
     route_or_url: str, retries: int = 100, return_dict: bool = False
-) -> typing.Union[dict, bytes]:
+) -> typing.Union[bytes, dict]:
     """Request feed data with validations and retries.
 
     Occassionally a feed is requested as the MTA is writing updated data to the file,

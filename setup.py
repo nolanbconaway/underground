@@ -18,8 +18,8 @@ INSTALL_REQUIRES = [
 ]
 
 DEV_REQUIRES = [
-    "pytest==7.*",
-    "ruff==0.7.* ",
+    "pytest==8.*",
+    "ruff==0.14.* ",
     "requests-mock==1.*",
 ]
 
