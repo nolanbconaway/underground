@@ -21,5 +21,6 @@ TEST_PROTOBUFS = [
     "feed_36_weekend.protobuf",
     "feed_51_weekday.protobuf",
     "feed_51_weekend.protobuf",
+    "feed_buses_weekend.protobuf",
     "has_empty_route_id.protobuf",
 ]

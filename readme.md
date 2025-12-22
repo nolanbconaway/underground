@@ -4,9 +4,12 @@
 [![PyPI - Python Version](https://img.shields.io/pypi/pyversions/underground)](https://pypi.org/project/underground/)
 [![PyPI](https://img.shields.io/pypi/v/underground)](https://pypi.org/project/underground/)
 
-This is a set of Python utilities that I use to deal with [real-time NYC subway data](https://datamine.mta.info/).
+This is a set of Python utilities that I use to deal with [real-time NYC subway data](https://www.mta.info/developers).
 
 I usually want to know when trains are going to depart a specific stop along a specific train line, so right now the tools are mostly for that. But I tried to write them to support arbitrary functionality.
+
+The same code can also load the [bus time data](https://bustime.mta.info/wiki/Developers/GTFSRt), if you forgive
+the mismatched naming conventions (e.g., a class called `SubwayFeed` holding a bus route).
 
 ## Install
 
@@ -150,11 +153,10 @@ Usage: underground findstops [OPTIONS] QUERY...
   $ underground findstops parkside av
 
 Options:
-
-  --json  Option to output the data as JSON. Otherwise will be human readable
-          table.
-
-  --help  Show this message and exit.
+  --json   Option to output the data as JSON. Otherwise will be human readable
+           table.
+  --buses  Option to also search bus stops. Slower.
+  --help   Show this message and exit.
 ```
 
 Enter the name of your stop and a table of stops with matching names will be returned.
@@ -165,4 +167,4 @@ ID: D27N    Direction: NORTH    Lat/Lon: 40.655292, -73.961495    Name: PARKSIDE
 ID: D27S    Direction: SOUTH    Lat/Lon: 40.655292, -73.961495    Name: PARKSIDE AV
 ```
 
-Some names are ambiguous (try "fulton st"), for these you'll have to dig into the [metadata](http://web.mta.info/developers/data/nyct/subway/google_transit.zip) more carefully.
+Some names are ambiguous (try "fulton st"), for these you'll have to dig into the [metadata](https://www.mta.info/developers#static-gtfs-data) more carefully.
