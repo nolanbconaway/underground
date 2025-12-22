@@ -13,5 +13,7 @@ select = [
     "RUF",  # ruff
 ]
 ignore = [
-    "UP045" # Convert to `X | None`
+    # ignoreable until we are done with 3.9
+    "UP045", # Convert to `X | None`
+    "UP007",
 ]
