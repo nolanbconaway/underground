@@ -78,8 +78,8 @@ Usage: underground feed [OPTIONS] ROUTE_OR_URL
 
   Request an MTA feed via a route or URL.
 
-  ROUTE_OR_URL may be either a feed URL or a route (which will be used to
-  look up the feed url).
+  ROUTE_OR_URL may be either a feed URL or a route (which will be used to look
+  up the feed url). ROUTE_OR_URL may also be "BUS" to access the bus feed.
 
   Examples (both access the same feed):
 
@@ -102,30 +102,29 @@ Options:
 
 ```
 $ underground stops --help
-Usage: underground stops [OPTIONS] [H|M|D|1|Z|A|N|GS|SI|J|G|Q|L|B|R|F|E|2|7|W|
-                          6|4|C|5|FS]
-    
+Usage: underground stops [OPTIONS] ROUTE
+
   Print out train departure times for all stops on a subway line.
 
 Options:
-
-  -f, --format TEXT      strftime format for stop times. Use `epoch` for a
-                          unix timestamp.
-  -r, --retries INTEGER  Retry attempts in case of API connection failure.
-                          Default 100.
-  -t, --timezone TEXT    Output timezone. Ignored if --epoch. Default to NYC
-                          time.
+  -f, --format TEXT              strftime format for stop times. Use `epoch`
+                                 for a unix timestamp.
+  -r, --retries INTEGER          Retry attempts in case of API connection
+                                 failure. Default 100.
+  -t, --timezone TEXT            Output timezone. Ignored if --epoch. Default
+                                 to NYC time.
   -s, --stalled-timeout INTEGER  Number of seconds between the last movement
                                  of a train and the API update before
                                  considering a train stalled. Default is 90 as
                                  recommended by the MTA. Numbers less than 1
                                  disable this check.
-  --help                 Show this message and exit.
+  --bus                          Set if the route is a bus route.
+  --help                         Show this message and exit.
 ```
 
 Stops are printed to stdout in the format `stop_id t1 t2 ... tn` .
 
-``` sh
+```sh
 $ underground stops Q | tail -2
 Q05S 19:01 19:09 19:16 19:25 19:34 19:44 19:51 19:58
 Q04S 19:03 19:11 19:18 19:27 19:36 19:46 19:53 20:00
@@ -168,3 +167,50 @@ ID: D27S    Direction: SOUTH    Lat/Lon: 40.655292, -73.961495    Name: PARKSIDE
 ```
 
 Some names are ambiguous (try "fulton st"), for these you'll have to dig into the [metadata](https://www.mta.info/developers#static-gtfs-data) more carefully.
+
+## Bus support
+
+`underground` was initially written for the MTA subway feeds. However, contributors to the package identified that some level of bus support could be achieved with minimal maintenance burden. Currently, `underground` supports the bus feed on a best-effort basis. 
+
+### Python API
+
+All bus lines share the same feed, but lines can be ephemeral so `underground` cannot list them all in advance. So special care needs to be taken when resolving routes. Use the special `BUS` route to get the feed, and then find your route in the stops:
+
+```py
+from underground import SubwayFeed
+feed = SubwayFeed.get("BUS")
+stops = feed.extract_stop_dict()['BX30']
+```
+
+### CLI
+
+Use the `BUS` identifier in the `feed` cli to obtain the bus feed. Querying a bus route will not work!
+
+```sh
+underground feed BUS
+```
+
+Similarly, use a `--bus` flag when obtaining stops to let underground know that it needs to retrieve the bus feed:
+
+```sh
+➜ underground stops --bus BX30 | tail -2
+101735 18:42 18:57 19:12
+104619 18:43 18:58 19:13
+```
+
+The bus stops lister in `findstops` is more expensive/time-consuming than the subway stops list, so use the `--bus` flag to indicate bus stops are desired:
+
+```sh
+➜ underground findstops --bus parkside
+ID: D27N     Direction: NORTH    Data Source: subway       Lat/Lon: 40.655292,-73.961495  Name: PARKSIDE AV
+ID: D27S     Direction: SOUTH    Data Source: subway       Lat/Lon: 40.655292,-73.961495  Name: PARKSIDE AV
+ID: 301309   Direction: (BUS)    Data Source: buses_bk     Lat/Lon: 40.655129,-73.961122  Name: PARKSIDE AV/OCEAN AV
+ID: 301310   Direction: (BUS)    Data Source: buses_bk     Lat/Lon: 40.655518,-73.960028  Name: PARKSIDE AV/FLATBUSH AV
+ID: 301311   Direction: (BUS)    Data Source: buses_bk     Lat/Lon: 40.655815,-73.956542  Name: PARKSIDE AV/BEDFORD AV
+ID: 303307   Direction: (BUS)    Data Source: buses_bk     Lat/Lon: 40.655257,-73.959894  Name: FLATBUSH AV/PARKSIDE AV
+ID: 303981   Direction: (BUS)    Data Source: buses_bk     Lat/Lon: 40.655541,-73.956442  Name: BEDFORD AV/PARKSIDE AV
+ID: 307645   Direction: (BUS)    Data Source: buses_bk     Lat/Lon: 40.654503,-73.961946  Name: OCEAN AV/PARKSIDE AV
+ID: 308349   Direction: (BUS)    Data Source: buses_bk     Lat/Lon: 40.655139,-73.961837  Name: OCEAN AV/PARKSIDE AV
+ID: 901089   Direction: (BUS)    Data Source: buses_bk     Lat/Lon: 40.654848,-73.961754  Name: PARKSIDE AV/OCEAN AV
+```
+
