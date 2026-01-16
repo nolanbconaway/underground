@@ -35,7 +35,7 @@ FEED_GROUPS = {
         "F",
         "M",
         "FS",
-        "FX", # seen this in the wild as well
+        "FX",  # seen this in the wild as well
     ),
     "https://api-endpoint.mta.info/Dataservice/mtagtfsfeeds/nyct%2Fgtfs-g": ("G",),
     "https://api-endpoint.mta.info/Dataservice/mtagtfsfeeds/nyct%2Fgtfs-jz": ("J", "Z"),
