@@ -15,7 +15,7 @@ def datetime_to_epoch(dttm: datetime.datetime) -> int:
 
 
 @click.command()
-@click.argument("route", nargs=1, type=click.Choice(metadata.VALID_ROUTES))
+@click.argument("route", type=str, nargs=1)
 @click.option(
     "-f",
     "--format",

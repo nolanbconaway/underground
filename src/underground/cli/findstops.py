@@ -54,6 +54,7 @@ def get_stops(include_buses: bool) -> Generator[dict[str, str], None, None]:
     help="Option to output the data as JSON. Otherwise will be human readable table.",
 )
 @click.option(
+    "--bus",
     "--buses",
     "include_buses",
     is_flag=True,
