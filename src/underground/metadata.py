@@ -17,8 +17,11 @@ FEED_GROUPS = {
         "6",
         "GS",
         "7",
-        # SS route is undocumented but i have seen it here "in the wild".
+        # Some unusual routes that i have seen in the wild
         "SS",
+        "5X",
+        "6X",
+        "7X",
     ),
     "https://api-endpoint.mta.info/Dataservice/mtagtfsfeeds/nyct%2Fgtfs-ace": (
         "A",
@@ -32,6 +35,7 @@ FEED_GROUPS = {
         "F",
         "M",
         "FS",
+        "FX", # seen this in the wild as well
     ),
     "https://api-endpoint.mta.info/Dataservice/mtagtfsfeeds/nyct%2Fgtfs-g": ("G",),
     "https://api-endpoint.mta.info/Dataservice/mtagtfsfeeds/nyct%2Fgtfs-jz": ("J", "Z"),
