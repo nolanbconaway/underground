@@ -59,7 +59,7 @@ def test_emptyfeederror(monkeypatch, dict_data):
 
 def test_request_invalid_feed():
     """Test that request raises value error for an invalid feed."""
-    with pytest.raises(ValueError):
+    with pytest.raises(metadata.UnknownRouteOrURL):
         feed.request("NOT REAL")
 
 

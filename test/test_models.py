@@ -34,12 +34,6 @@ def test_trip_invalid_date():
         models.Trip(trip_id="1", start_date=0, route_id="5")
 
 
-def test_trip_invalid_feed():
-    """Test valuerror for invalid feeds."""
-    with pytest.raises(ValueError):
-        models.Trip(trip_id="1", start_date=20190101, route_id="FAKE")
-
-
 def test_extract_stop_dict():
     """Test that the correct train times are extracted."""
     sample_data = {
@@ -91,34 +85,6 @@ def test_get(requests_mock, filename):
 
     assert isinstance(feed, SubwayFeed)
     assert isinstance(feed.extract_stop_dict(), dict)
-
-
-def test_trip_route_remap():
-    """Test that the remapping works for a known route."""
-    trip = models.Trip(trip_id="FAKE", start_time="01:00:00", start_date=20190101, route_id="5X")
-    assert trip.route_id_mapped == "5"
-
-
-def test_extract_dict_route_remap():
-    """Test that the route remap is active for dict extraction."""
-    sample_data = {
-        "header": {"gtfs_realtime_version": "1.0", "timestamp": 0},
-        "entity": [
-            {
-                "id": "X",
-                "trip_update": {
-                    "trip": {
-                        "trip_id": "X",
-                        "start_date": "20190726",
-                        "route_id": "5X",
-                    },
-                    "stop_time_update": [{"arrival": {"time": 0}, "stop_id": "X"}],
-                },
-            }
-        ],
-    }
-    stops = SubwayFeed(**sample_data).extract_stop_dict()
-    assert len(stops["5"]["X"]) == 1
 
 
 def test_extract_dict_elapsed_ignored():
@@ -230,13 +196,13 @@ def test_extract_dict_stalled_train_omitted():
 
 
 def test_empty_route_id():
-    """Test the route functionality when the route id is a blacnk string.
+    """Test the route functionality when the route id is a blank string.
 
     This uses example data i found in the wild.
     """
     trip = {"route_id": "", "start_date": "20191120", "trip_id": "060750_..N"}
     trip = models.Trip(**trip)
-    assert trip.route_id_mapped == ""
+    assert trip.route_id == ""
     assert not trip.route_is_assigned
 
 
