@@ -15,7 +15,7 @@ def datetime_to_epoch(dttm: datetime.datetime) -> int:
 
 
 @click.command()
-@click.argument("route", nargs=1, type=click.Choice(metadata.VALID_ROUTES))
+@click.argument("route", type=str, nargs=1)
 @click.option(
     "-f",
     "--format",
@@ -48,10 +48,12 @@ def datetime_to_epoch(dttm: datetime.datetime) -> int:
     " update before considering a train stalled. Default is 90 as recommended"
     " by the MTA. Numbers less than 1 disable this check.",
 )
-def main(route, fmt, retries, timezone, stalled_timeout):
+@click.option("--bus", is_flag=True, help="Set if the route is a bus route.")
+def main(route: str, fmt: str, retries: int, timezone: str, stalled_timeout: int, bus: bool):
     """Print out train departure times for all stops on a subway line."""
+    route_or_url = route if not bus else metadata.BUS_URL
     stops = (
-        SubwayFeed.get(route_or_url=route, retries=retries)
+        SubwayFeed.get(route_or_url=route_or_url, retries=retries)
         .extract_stop_dict(timezone=timezone, stalled_timeout=stalled_timeout)
         .get(route, dict())
     )

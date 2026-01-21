@@ -50,24 +50,6 @@ class Trip(pydantic.BaseModel):
 
         return start_date
 
-    @pydantic.field_validator("route_id")
-    def check_route(cls, route_id):
-        """Check for a valid route ID value."""
-        if route_id not in metadata.ROUTE_REMAP:
-            raise ValueError(
-                f"Invalid route ({route_id}). Must be one of {set(metadata.ROUTE_REMAP.keys())}."
-            )
-
-        return route_id
-
-    @property
-    def route_id_mapped(self) -> str:
-        """Find the parent route ID.
-
-        This is helpful for grabbing the, e.g., 5 Train when you might have a 5X.
-        """
-        return metadata.ROUTE_REMAP[self.route_id]
-
     @property
     def route_is_assigned(self) -> bool:
         """Return a flag indicating that there is a route."""
@@ -187,7 +169,7 @@ class SubwayFeed(pydantic.BaseModel):
         route_or_url : str
             Route ID or feed url (per ``https://api.mta.info/#/subwayRealTimeFeeds``).
             If a route, the URL for that route is looked up. All routes served by that
-            URL will be included in the result.
+            URL will be included in the result. Set route_or_url to 'BUS' to obtain bus updates.
         retries : int
             Number of retry attempts, with 1 second timeout between attempts.
             Set to -1 for unlimited. Default 100.
@@ -198,6 +180,9 @@ class SubwayFeed(pydantic.BaseModel):
             An instance of the SubwayFeed class with the requested data.
 
         """
+        if route_or_url == "BUS":
+            route_or_url = metadata.BUS_URL
+
         return cls(
             **feed.request_robust(route_or_url=route_or_url, retries=retries, return_dict=True)
         )
@@ -246,7 +231,7 @@ class SubwayFeed(pydantic.BaseModel):
         # create (route, stop, time) tuples from each trip
         stops_flat = (
             (
-                trip.trip.route_id_mapped,
+                trip.trip.route_id,
                 stop.stop_id,
                 (stop.depart_or_arrive).time.astimezone(zoneinfo.ZoneInfo(timezone)),
             )

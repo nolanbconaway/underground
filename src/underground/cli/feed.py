@@ -4,7 +4,7 @@ import json
 
 import click
 
-from underground import feed, metadata
+from underground import feed
 
 
 @click.command()
@@ -23,11 +23,11 @@ from underground import feed, metadata
     type=int,
     help="Retry attempts in case of API connection failure. Default 100.",
 )
-def main(route_or_url, output_json, retries):
+def main(route_or_url: str, output_json: bool, retries: int):
     """Request an MTA feed via a route or URL.
 
     ROUTE_OR_URL may be either a feed URL or a route (which will be used to look up
-    the feed url).
+    the feed url). ROUTE_OR_URL may also be "BUS" to access the bus feed.
 
     Examples (both access the same feed):
 
@@ -38,18 +38,7 @@ def main(route_or_url, output_json, retries):
       URL='https://api-endpoint.mta.info/Dataservice/mtagtfsfeeds/nyct%2Fgtfs-nqrw' &&
       underground feed $URL --json > feed_nrqw.json
     """
-    if route_or_url not in metadata.VALID_ROUTES.union(metadata.VALID_FEED_URLS):
-        raise click.ClickException(
-            f"Invalid route or URL. Try a route like {metadata.VALID_ROUTES} "
-            "or a url from https://api.mta.info/#/subwayRealTimeFeeds."
-        )
-
-    data = feed.request_robust(
-        route_or_url=route_or_url,
-        retries=retries,
-        return_dict=output_json,
-    )
-
+    data = feed.request_robust(route_or_url=route_or_url, retries=retries, return_dict=output_json)
     if output_json:
         click.echo(json.dumps(data))
     else:
