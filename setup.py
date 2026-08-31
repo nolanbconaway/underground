@@ -9,10 +9,9 @@ VERSION = (THIS_DIRECTORY / "src" / "underground" / "version").read_text().strip
 
 INSTALL_REQUIRES = [
     "requests==2.*",
-    "google~=2.0",
-    "gtfs-realtime-bindings==0.0.6",
-    "protobuf>=3.19.6,<=3.20.3",
-    "protobuf3-to-dict==0.1.*",
+    "google~=3.0",
+    "gtfs-realtime-bindings~=2.2",
+    "protobuf>=7,<8",
     "click>=7,<9",
     "pydantic==2.*",
 ]
