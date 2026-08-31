@@ -204,9 +204,7 @@ class SubwayFeed(pydantic.BaseModel):
             route_or_url = metadata.BUS_URL
 
         return cls(
-            **feed.request_robust(
-                route_or_url=route_or_url, retries=retries, return_dict=True
-            )
+            **feed.request_robust(route_or_url=route_or_url, retries=retries, return_dict=True)
         )
 
     def extract_stop_dict(
@@ -232,11 +230,7 @@ class SubwayFeed(pydantic.BaseModel):
         """
 
         trip_updates = (x.trip_update for x in self.entity if x.trip_update is not None)
-        vehicles = {
-            e.vehicle.trip.trip_id: e.vehicle
-            for e in self.entity
-            if e.vehicle is not None
-        }
+        vehicles = {e.vehicle.trip.trip_id: e.vehicle for e in self.entity if e.vehicle is not None}
 
         def is_trip_active(update: TripUpdate) -> bool:
             has_route = update.trip.route_is_assigned
@@ -247,9 +241,9 @@ class SubwayFeed(pydantic.BaseModel):
                 return has_route and has_stops
 
             # as recommended by the MTA, we use these timestamps to determine if a train is stalled
-            train_stalled = (
-                self.header.timestamp - vehicle.timestamp
-            ) > datetime.timedelta(seconds=stalled_timeout)
+            train_stalled = (self.header.timestamp - vehicle.timestamp) > datetime.timedelta(
+                seconds=stalled_timeout
+            )
             return has_route and has_stops and not train_stalled
 
         # grab the updates with routes and stop times
