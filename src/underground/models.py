@@ -5,8 +5,16 @@ import typing
 import zoneinfo
 
 import pydantic
+import pydantic.alias_generators
 
 from underground import feed, metadata
+
+allow_camel_aliaes = pydantic.AliasGenerator(
+    validation_alias=lambda f: pydantic.AliasChoices(
+        pydantic.alias_generators.to_camel(f),
+        f,
+    )
+)
 
 
 class UnixTimestamp(pydantic.BaseModel):
@@ -25,6 +33,8 @@ class UnixTimestamp(pydantic.BaseModel):
 class FeedHeader(pydantic.BaseModel):
     """Data model for the feed header."""
 
+    model_config = pydantic.ConfigDict(alias_generator=allow_camel_aliaes)
+
     gtfs_realtime_version: str
     timestamp: datetime.datetime
 
@@ -36,6 +46,8 @@ class FeedHeader(pydantic.BaseModel):
 
 class Trip(pydantic.BaseModel):
     """Model describing a train trip."""
+
+    model_config = pydantic.ConfigDict(alias_generator=allow_camel_aliaes)
 
     trip_id: str
     start_time: typing.Optional[datetime.time] = None
@@ -73,6 +85,8 @@ class StopTimeUpdate(pydantic.BaseModel):
     message.
     """
 
+    model_config = pydantic.ConfigDict(alias_generator=allow_camel_aliaes)
+
     stop_id: str
     arrival: typing.Optional[UnixTimestamp] = None
     departure: typing.Optional[UnixTimestamp] = None
@@ -102,6 +116,8 @@ class TripUpdate(pydantic.BaseModel):
     train that is never assigned a trip identifier to be changed or cancelled than an
     assigned one.
     """
+
+    model_config = pydantic.ConfigDict(alias_generator=allow_camel_aliaes)
 
     trip: Trip
     stop_time_update: typing.Optional[list[StopTimeUpdate]] = None
@@ -133,6 +149,8 @@ class Vehicle(pydantic.BaseModel):
     determine a train stalled condition.
     """
 
+    model_config = pydantic.ConfigDict(alias_generator=allow_camel_aliaes)
+
     trip: Trip
     timestamp: typing.Optional[datetime.datetime] = None
     current_stop_sequence: typing.Optional[int] = None
@@ -145,6 +163,8 @@ class Entity(pydantic.BaseModel):
     As a side note, I have never found a case where there is BOTH a VehiclePosition and
     a TripUpdate.
     """
+
+    model_config = pydantic.ConfigDict(alias_generator=allow_camel_aliaes)
 
     id: str
     vehicle: typing.Optional[Vehicle] = None
@@ -184,7 +204,9 @@ class SubwayFeed(pydantic.BaseModel):
             route_or_url = metadata.BUS_URL
 
         return cls(
-            **feed.request_robust(route_or_url=route_or_url, retries=retries, return_dict=True)
+            **feed.request_robust(
+                route_or_url=route_or_url, retries=retries, return_dict=True
+            )
         )
 
     def extract_stop_dict(
@@ -210,7 +232,11 @@ class SubwayFeed(pydantic.BaseModel):
         """
 
         trip_updates = (x.trip_update for x in self.entity if x.trip_update is not None)
-        vehicles = {e.vehicle.trip.trip_id: e.vehicle for e in self.entity if e.vehicle is not None}
+        vehicles = {
+            e.vehicle.trip.trip_id: e.vehicle
+            for e in self.entity
+            if e.vehicle is not None
+        }
 
         def is_trip_active(update: TripUpdate) -> bool:
             has_route = update.trip.route_is_assigned
@@ -221,9 +247,9 @@ class SubwayFeed(pydantic.BaseModel):
                 return has_route and has_stops
 
             # as recommended by the MTA, we use these timestamps to determine if a train is stalled
-            train_stalled = (self.header.timestamp - vehicle.timestamp) > datetime.timedelta(
-                seconds=stalled_timeout
-            )
+            train_stalled = (
+                self.header.timestamp - vehicle.timestamp
+            ) > datetime.timedelta(seconds=stalled_timeout)
             return has_route and has_stops and not train_stalled
 
         # grab the updates with routes and stop times
