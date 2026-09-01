@@ -48,7 +48,7 @@ def test_robust_retry_logic(requests_mock, monkeypatch, retries):
 @pytest.mark.parametrize("dict_data", [dict(), dict(a=1)])
 def test_emptyfeederror(monkeypatch, dict_data):
     """Test that empty feed is raised."""
-    monkeypatch.setattr("google.protobuf.json_format.MessageToDict", lambda x: dict_data)
+    monkeypatch.setattr("google.protobuf.json_format.MessageToDict", lambda *args, **kwargs: dict_data)
 
     with open(os.path.join(DATA_DIR, TEST_PROTOBUFS[0]), "rb") as file:
         protobuf_data = file.read()
