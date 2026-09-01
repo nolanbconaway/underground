@@ -31,7 +31,7 @@ def load_protobuf(protobuf_bytes: bytes) -> dict:
     """
     feed = gtfs_realtime_pb2.FeedMessage()
     feed.ParseFromString(protobuf_bytes)
-    feed_dict = google.protobuf.json_format.MessageToDict(feed)
+    feed_dict = google.protobuf.json_format.MessageToDict(feed, preserving_proto_field_name=True)
     if not feed_dict or "entity" not in feed_dict:
         raise EmptyFeedError
 

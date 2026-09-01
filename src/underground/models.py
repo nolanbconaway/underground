@@ -5,16 +5,8 @@ import typing
 import zoneinfo
 
 import pydantic
-import pydantic.alias_generators
 
 from underground import feed, metadata
-
-allow_camel_aliaes = pydantic.AliasGenerator(
-    validation_alias=lambda f: pydantic.AliasChoices(
-        pydantic.alias_generators.to_camel(f),
-        f,
-    )
-)
 
 
 class UnixTimestamp(pydantic.BaseModel):
@@ -33,8 +25,6 @@ class UnixTimestamp(pydantic.BaseModel):
 class FeedHeader(pydantic.BaseModel):
     """Data model for the feed header."""
 
-    model_config = pydantic.ConfigDict(alias_generator=allow_camel_aliaes)
-
     gtfs_realtime_version: str
     timestamp: datetime.datetime
 
@@ -46,8 +36,6 @@ class FeedHeader(pydantic.BaseModel):
 
 class Trip(pydantic.BaseModel):
     """Model describing a train trip."""
-
-    model_config = pydantic.ConfigDict(alias_generator=allow_camel_aliaes)
 
     trip_id: str
     start_time: typing.Optional[datetime.time] = None
@@ -85,8 +73,6 @@ class StopTimeUpdate(pydantic.BaseModel):
     message.
     """
 
-    model_config = pydantic.ConfigDict(alias_generator=allow_camel_aliaes)
-
     stop_id: str
     arrival: typing.Optional[UnixTimestamp] = None
     departure: typing.Optional[UnixTimestamp] = None
@@ -116,8 +102,6 @@ class TripUpdate(pydantic.BaseModel):
     train that is never assigned a trip identifier to be changed or cancelled than an
     assigned one.
     """
-
-    model_config = pydantic.ConfigDict(alias_generator=allow_camel_aliaes)
 
     trip: Trip
     stop_time_update: typing.Optional[list[StopTimeUpdate]] = None
@@ -149,8 +133,6 @@ class Vehicle(pydantic.BaseModel):
     determine a train stalled condition.
     """
 
-    model_config = pydantic.ConfigDict(alias_generator=allow_camel_aliaes)
-
     trip: Trip
     timestamp: typing.Optional[datetime.datetime] = None
     current_stop_sequence: typing.Optional[int] = None
@@ -163,8 +145,6 @@ class Entity(pydantic.BaseModel):
     As a side note, I have never found a case where there is BOTH a VehiclePosition and
     a TripUpdate.
     """
-
-    model_config = pydantic.ConfigDict(alias_generator=allow_camel_aliaes)
 
     id: str
     vehicle: typing.Optional[Vehicle] = None
